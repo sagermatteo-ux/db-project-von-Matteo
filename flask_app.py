@@ -48,7 +48,7 @@ def webhook():
 
 # Auth routes
 @app.get("/users")
-def users()
+def users():
     return render_template("users.html");
 
 @app.route("/login", methods=["GET", "POST"])
