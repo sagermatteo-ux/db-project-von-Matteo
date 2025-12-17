@@ -4,7 +4,7 @@ CREATE TABLE users (
     password VARCHAR(250) NOT NULL
 );
 
-CREATE TABLE todos (
+CREATE TABLE Material (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     content VARCHAR(100),
