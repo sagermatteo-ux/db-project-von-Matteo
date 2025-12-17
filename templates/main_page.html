@@ -37,10 +37,17 @@
           </div>
 
           <div class="form-group">
-            <label for="due_at">Kategorie</label>
-            <input id="due_at" name="due_at" type="datetime-local" class="form-control" required>
-            <p class="help-block">Wähle die Kategorie zu der dein Gegenstand gehört.</p>
-          </div>
+  <label for="category">Kategorie</label>
+  <select id="category" name="category" class="form-control" required>
+    <option value="" disabled selected>Bitte wählen</option>
+    <option value="buecher">Bücher</option>
+    <option value="taschenrechner">Taschenrechner</option>
+    <option value="lineal_geodreieck">Lineal und Geodreieck</option>
+    <option value="zirkel">Zirkel</option>
+    <option value="schreibmaterial">Schreibmaterial</option>
+  </select>
+  <p class="help-block">Wähle die Kategorie, zu der dein Gegenstand gehört.</p>
+</div>
 
           <button type="submit" class="btn btn-primary">Hinzufügen</button>
         </form>
