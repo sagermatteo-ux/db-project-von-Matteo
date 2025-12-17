@@ -123,9 +123,7 @@ def index():
 
     # POST
     content = request.form["contents"]
-    due = request.form["due_at"]
-    db_write("INSERT INTO todos (user_id, content, due) VALUES (%s, %s, %s)", (current_user.id, content, due, ))
-    return redirect(url_for("index"))
+   select id="category" name="category" class="form-control" required           return redirect(url_for("index"))
 
 @app.post("/complete")
 @login_required
