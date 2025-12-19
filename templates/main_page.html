@@ -16,11 +16,11 @@
                   name="complete"
                   value="1"
                   onchange="this.form.submit()">
-
-                <label for="todo-{{ todo.id }}" class="todo-content">
-                  {{ todo.content }}
-                  
-                </label>
+<label for="todo-{{ todo.id }}" class="todo-content">
+  {{ todo.content }}
+  <br>
+  <small>📍 {{ todo.location }}</small>
+</label>
               </form>
             </li>
           {% else %}
