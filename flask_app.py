@@ -123,8 +123,8 @@ def index():
 
     # POST
     content = request.form["contents"]
-    due = request.form["due_at"]
-    db_write("INSERT INTO todos (user_id, content, due) VALUES (%s, %s, %s)", (current_user.id, content, due, ))
+    cat = request.form["category"]
+    db_write("INSERT INTO todos (user_id, content, cat) VALUES (%s, %s, %s)", (current_user.id, content, cat, ))
     return redirect(url_for("index"))
 
 @app.post("/complete")

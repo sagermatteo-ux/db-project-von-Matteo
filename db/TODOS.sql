@@ -8,6 +8,8 @@ CREATE TABLE Material (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     content VARCHAR(100),
-    due DATETIME,
+    cat VARCHAR(100),
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+
