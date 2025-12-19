@@ -122,8 +122,8 @@ def index():
         return render_template("main_page.html", todos=todos)
 
 # POST
-content = request. form["contents"]
-due = request. form["due_at"]
+content = request.form["contents"]
+due = request.form["due_at"]
 db_write("INSERT INTO todos (user_id, content, due) VALUES (%s, %s, %s)", (current_user.id, content, due, ))
 return redirect(url_for("index"))
 
