@@ -118,20 +118,20 @@ def logout():
 def index():
     # GET
     if request.method == "GET":
-        todos = db_read("SELECT id, content, due FROM todos ORDER BY due", ())
+        todos = db_read("SELECT id, content, cat FROM Material", ())
         return render_template("main_page.html", todos=todos)
 
     # POST
     content = request.form["contents"]
     cat = request.form["category"]
-    db_write("INSERT INTO todos (user_id, content, cat) VALUES (%s, %s, %s)", (current_user.id, content, cat, ))
+    db_write("INSERT INTO Material (user_id, content, cat) VALUES (%s, %s, %s)", (current_user.id, content, cat, ))
     return redirect(url_for("index"))
 
 @app.post("/complete")
 @login_required
 def complete():
     todo_id = request.form.get("id")
-    db_write("DELETE FROM todos WHERE user_id=%s AND id=%s", (current_user.id, todo_id,))
+    db_write("DELETE FROM Material WHERE user_id=%s AND id=%s", (current_user.id, todo_id,))
     return redirect(url_for("index"))
 
 if __name__ == "__main__":
