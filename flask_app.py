@@ -121,9 +121,11 @@ def index():
         todos = db_read("SELECT id, content, due FROM todos WHERE user_id=%s ORDER BY due", (current_user.id,))
         return render_template("main_page.html", todos=todos)
 
-    # POST
-    content = request.form["contents"]
-   select id="category" name="category" class="form-control" required           return redirect(url_for("index"))
+# POST
+content = request. form["contents"]
+due = request. form["due_at"]
+db_write("'INSERT INTO todos (user_id, content, due) VALUES (%s, %5, %s)", (current_user. id,
+return redirect(url_for("index"))
 
 @app.post("/complete")
 @login_required
