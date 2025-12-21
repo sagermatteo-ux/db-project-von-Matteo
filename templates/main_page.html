@@ -2,77 +2,63 @@
 
 {% block content %}
 
-<div class="container mt-4">
-
-    <!-- Notifications -->
-    <div class="notifications mb-4">
-        {% for note in notifications %}
-            <div class="alert alert-info">{{ note.message }}</div>
-        {% else %}
-            <p>Keine neuen Benachrichtigungen.</p>
-        {% endfor %}
-    </div>
-
-    <!-- Material / Todo Liste -->
-    <ul class="list-group mb-4">
-        {% for todo in todos %}
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                
-                <div>
-                    <strong>{{ todo.content }}</strong>
-                    <br>
-                    <small>📍 {{ todo.location }}</small>
-                </div>
-
-                <div class="d-flex gap-2">
-                    {% if todo.user_id != current_user.id %}
-                        <form action="{{ url_for('rent', material_id=todo.id) }}" method="POST">
-                            <button type="submit" class="btn btn-success btn-sm">Mieten</button>
-                        </form>
-                    {% endif %}
-
-                    {% if todo.user_id == current_user.id %}
-                        <form action="{{ url_for('complete') }}" method="POST">
-                            <input type="hidden" name="id" value="{{ todo.id }}">
-                            <button type="submit" class="btn btn-danger btn-sm">Löschen</button>
-                        </form>
-                    {% endif %}
-                </div>
-            </li>
-        {% else %}
-            <li class="list-group-item">Keine veröffentlichten Gegenstände.</li>
-        {% endfor %}
-    </ul>
-
-    <!-- Formular für neues Material -->
-    <div class="card p-3">
-        <form action="{{ url_for('index') }}" method="POST">
-            <div class="mb-3">
-                <label for="contents" class="form-label">Gegenstand</label>
-                <input type="text" class="form-control" id="contents" name="contents" placeholder="Neuen Gegenstand eingeben" required>
-            </div>
-
-            <div class="mb-3">
-                <label for="category" class="form-label">Kategorie</label>
-                <select class="form-select" id="category" name="category" required>
-                    <option value="" disabled selected>Bitte wählen</option>
-                    <option value="buecher">Bücher</option>
-                    <option value="taschenrechner">Taschenrechner</option>
-                    <option value="lineal_geodreieck">Lineal und Geodreieck</option>
-                    <option value="zirkel">Zirkel</option>
-                    <option value="schreibmaterial">Schreibmaterial</option>
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label for="location" class="form-label">Ort</label>
-                <input type="text" class="form-control" id="location" name="location" placeholder="z. B. Zimmer 512" required>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Hinzufügen</button>
+<ul class="todo-list">
+    {% for todo in todos %}
+    <li class="todo-item">
+        <form action="/complete" method="POST" class="todo-complete-form">
+            <input type="hidden" name="id" value="{{ todo.id }}">
+            <input
+                type="checkbox"
+                class="todo-checkbox"
+                id="todo-{{ todo.id }}"
+                name="complete"
+                value="1"
+                onchange="this.form.submit()">
+            <label for="todo-{{ todo.id }}" class="todo-content">
+                {{ todo.content }}<br>
+                <small>📍 {{ todo.location }}</small>
+            </label>
         </form>
-    </div>
 
+        {% if todo.user_id != current_user.id %}
+        <form action="{{ url_for('rent', material_id=todo.id) }}" method="POST">
+            <button type="submit" class="btn btn-success">Mieten</button>
+        </form>
+        {% endif %}
+    </li>
+    {% else %}
+    <div>...Keine veröffentlichten Gegenstände❗</div>
+    {% endfor %}
+</ul>
+
+<div class="todo-form">
+    <form action="." method="POST">
+        <div class="form-group">
+            <label for="contents">Gegenstand einfügen</label>
+            <input type="text" id="contents" name="contents" class="form-control"
+                placeholder="Neuen Gegenstand eingeben..." required />
+        </div>
+
+        <div class="form-group">
+            <label for="category">Kategorie</label>
+            <select id="category" name="category" class="form-control" required>
+                <option value="" disabled selected>Bitte wählen</option>
+                <option value="buecher">Bücher</option>
+                <option value="taschenrechner">Taschenrechner</option>
+                <option value="lineal_geodreieck">Lineal und Geodreieck</option>
+                <option value="zirkel">Zirkel</option>
+                <option value="schreibmaterial">Schreibmaterial</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="location">Ort</label>
+            <input type="text" id="location" name="location" class="form-control"
+                placeholder="z. B. Zimmer 512" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Hinzufügen</button>
+    </form>
 </div>
 
 {% endblock %}
