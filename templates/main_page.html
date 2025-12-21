@@ -4,41 +4,40 @@
 
 <ul class="todo-list">
     {% for todo in todos %}
-    <li class="todo-item">
-        <form action="/complete" method="POST" class="todo-complete-form">
-            <input type="hidden" name="id" value="{{ todo.id }}">
-            <input
-                type="checkbox"
-                class="todo-checkbox"
-                id="todo-{{ todo.id }}"
-                name="complete"
-                value="1"
-                onchange="this.form.submit()">
-            <label for="todo-{{ todo.id }}" class="todo-content">
-                {{ todo.content }}<br>
-                <small>📍 {{ todo.location }}</small>
-            </label>
-        </form>
-
-        {% if todo.user_id != current_user.id %}
-        <form action="{{ url_for('rent', material_id=todo.id) }}" method="POST">
-            <button type="submit" class="btn btn-success">Mieten</button>
-        </form>
-        {% endif %}
-    </li>
+        <li class="todo-item">
+            <form action="/complete" method="POST" class="todo-complete-form">
+                <input type="hidden" name="id" value="{{ todo.id }}">
+                <input
+                    type="checkbox"
+                    class="todo-checkbox"
+                    id="todo-{{ todo.id }}"
+                    name="complete"
+                    value="1"
+                    onchange="this.form.submit()">
+                <label for="todo-{{ todo.id }}" class="todo-content">
+                    {{ todo.content }}
+                    <br>
+                    <small>📍 {{ todo.location }} | Kategorie: {{ todo.cat }}</small>
+                </label>
+                {% if todo.user_id != current_user.id %}
+                <form action="{{ url_for('rent', material_id=todo.id) }}" method="POST">
+                    <button type="submit" class="btn btn-success">Mieten</button>
+                </form>
+                {% endif %}
+            </form>
+        </li>
     {% else %}
-    <div>...Keine veröffentlichten Gegenstände❗</div>
+        <div>...Keine veröffentlichten Gegenstände❗</div>
     {% endfor %}
 </ul>
 
 <div class="todo-form">
     <form action="." method="POST">
         <div class="form-group">
-            <label for="contents">Gegenstand einfügen</label>
+            <label for="contents">Insert Material</label>
             <input type="text" id="contents" name="contents" class="form-control"
                 placeholder="Neuen Gegenstand eingeben..." required />
         </div>
-
         <div class="form-group">
             <label for="category">Kategorie</label>
             <select id="category" name="category" class="form-control" required>
@@ -49,18 +48,24 @@
                 <option value="zirkel">Zirkel</option>
                 <option value="schreibmaterial">Schreibmaterial</option>
             </select>
+            <p class="help-block">Wähle die Kategorie zu der dein Gegenstand gehört.</p>
         </div>
-
         <div class="form-group">
             <label for="location">Ort</label>
-            <input type="text" id="location" name="location" class="form-control"
-                placeholder="z. B. Zimmer 512" required>
+            <input
+                type="text"
+                id="location"
+                name="location"
+                class="form-control"
+                placeholder="z. B. Zimmer 512"
+                required>
+            <p class="help-block">Wo befindet sich der Gegenstand?</p>
         </div>
-
         <button type="submit" class="btn btn-primary">Hinzufügen</button>
     </form>
 </div>
 
 {% endblock %}
+
 
   
