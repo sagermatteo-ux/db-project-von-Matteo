@@ -2,81 +2,77 @@
 
 {% block content %}
 
-<!-- 1️⃣ Notifications oben -->
-{% if notifications %}
-<div class="notifications mb-3">
-    {% for note in notifications %}
-        <div class="alert alert-info">{{ note.message }}</div>
-    {% endfor %}
-</div>
-{% endif %}
+<div class="container mt-4">
 
-<!-- 2️⃣ Todo / Material Liste -->
-<ul class="todo-list list-unstyled">
-    {% for todo in todos %}
-    <li class="todo-item mb-2">
+    <!-- Notifications -->
+    <div class="notifications mb-4">
+        {% for note in notifications %}
+            <div class="alert alert-info">{{ note.message }}</div>
+        {% else %}
+            <p>Keine neuen Benachrichtigungen.</p>
+        {% endfor %}
+    </div>
 
-        <!-- Erledigt-Formular -->
-        <form action="/complete" method="POST" class="d-inline-block">
-            <input type="hidden" name="id" value="{{ todo.id }}">
-            <input
-                type="checkbox"
-                id="todo-{{ todo.id }}"
-                name="complete"
-                value="1"
-                class="todo-checkbox me-2"
-                onchange="this.form.submit()">
-            <label for="todo-{{ todo.id }}">
-                {{ todo.content }}
-                <br>
-                <small>📍 {{ todo.location }}</small>
-            </label>
+    <!-- Material / Todo Liste -->
+    <ul class="list-group mb-4">
+        {% for todo in todos %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                
+                <div>
+                    <strong>{{ todo.content }}</strong>
+                    <br>
+                    <small>📍 {{ todo.location }}</small>
+                </div>
+
+                <div class="d-flex gap-2">
+                    {% if todo.user_id != current_user.id %}
+                        <form action="{{ url_for('rent', material_id=todo.id) }}" method="POST">
+                            <button type="submit" class="btn btn-success btn-sm">Mieten</button>
+                        </form>
+                    {% endif %}
+
+                    {% if todo.user_id == current_user.id %}
+                        <form action="{{ url_for('complete') }}" method="POST">
+                            <input type="hidden" name="id" value="{{ todo.id }}">
+                            <button type="submit" class="btn btn-danger btn-sm">Löschen</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </li>
+        {% else %}
+            <li class="list-group-item">Keine veröffentlichten Gegenstände.</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Formular für neues Material -->
+    <div class="card p-3">
+        <form action="{{ url_for('index') }}" method="POST">
+            <div class="mb-3">
+                <label for="contents" class="form-label">Gegenstand</label>
+                <input type="text" class="form-control" id="contents" name="contents" placeholder="Neuen Gegenstand eingeben" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="category" class="form-label">Kategorie</label>
+                <select class="form-select" id="category" name="category" required>
+                    <option value="" disabled selected>Bitte wählen</option>
+                    <option value="buecher">Bücher</option>
+                    <option value="taschenrechner">Taschenrechner</option>
+                    <option value="lineal_geodreieck">Lineal und Geodreieck</option>
+                    <option value="zirkel">Zirkel</option>
+                    <option value="schreibmaterial">Schreibmaterial</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="location" class="form-label">Ort</label>
+                <input type="text" class="form-control" id="location" name="location" placeholder="z. B. Zimmer 512" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Hinzufügen</button>
         </form>
+    </div>
 
-        <!-- Mieten-Button nur für fremde Gegenstände -->
-        {% if todo.user_id != current_user.id %}
-        <form action="{{ url_for('rent', material_id=todo.id) }}" method="POST" class="d-inline-block ms-2">
-            <button type="submit" class="btn btn-success btn-sm">Mieten</button>
-        </form>
-        {% endif %}
-
-    </li>
-    {% else %}
-    <div class="text-muted">...Keine veröffentlichten Gegenstände❗</div>
-    {% endfor %}
-</ul>
-
-<!-- 3️⃣ Formular für neues Material -->
-<div class="todo-form mt-4">
-    <form action="." method="POST">
-        <div class="mb-3">
-            <label for="contents" class="form-label">Gegenstand einfügen</label>
-            <input type="text" id="contents" name="contents" class="form-control"
-                   placeholder="Neuen Gegenstand eingeben..." required>
-        </div>
-
-        <div class="mb-3">
-            <label for="category" class="form-label">Kategorie</label>
-            <select id="category" name="category" class="form-select" required>
-                <option value="" disabled selected>Bitte wählen</option>
-                <option value="buecher">Bücher</option>
-                <option value="taschenrechner">Taschenrechner</option>
-                <option value="lineal_geodreieck">Lineal und Geodreieck</option>
-                <option value="zirkel">Zirkel</option>
-                <option value="schreibmaterial">Schreibmaterial</option>
-            </select>
-            <div class="form-text">Wähle die Kategorie, zu der dein Gegenstand gehört.</div>
-        </div>
-
-        <div class="mb-3">
-            <label for="location" class="form-label">Ort</label>
-            <input type="text" id="location" name="location" class="form-control"
-                   placeholder="z. B. Zimmer 512" required>
-            <div class="form-text">Wo befindet sich der Gegenstand?</div>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Hinzufügen</button>
-    </form>
 </div>
 
 {% endblock %}
