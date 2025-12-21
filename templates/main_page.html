@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
+<!-- Notifications-Bereich -->
+<div class="notifications">
+    {% for note in notifications %}
+        <div class="alert alert-info">{{ note.message }}</div>
+    {% endfor %}
+</div>
     <ul class="todo-list">
           {% for todo in todos %}
             <li class="todo-item">
