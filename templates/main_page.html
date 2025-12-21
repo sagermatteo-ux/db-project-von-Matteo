@@ -1,79 +1,92 @@
 {% extends "base.html" %}
 
 {% block content %}
-<!-- Notifications-Bereich -->
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Benachrichtigungen -->
 <div class="notifications">
     {% for note in notifications %}
         <div class="alert alert-info">{{ note.message }}</div>
     {% endfor %}
 </div>
-    <ul class="todo-list">
-          {% for todo in todos %}
-            <li class="todo-item">
-              <form action="/complete" method="POST" class="todo-complete-form">
 
+<!-- Liste der Gegenstände -->
+<ul class="todo-list">
+    {% for todo in todos %}
+        <li class="todo-item">
+            <form action="/complete" method="POST" class="todo-complete-form">
                 <input type="hidden" name="id" value="{{ todo.id }}">
 
-                <!-- Checkbox triggert Submit -->
+                <!-- Checkbox für erledigte Gegenstände -->
                 <input
-                  type="checkbox"
-                  class="todo-checkbox"
-                  id="todo-{{ todo.id }}"
-                  name="complete"
-                  value="1"
-                  onchange="this.form.submit()">
-<label for="todo-{{ todo.id }}" class="todo-content">
-  {{ todo.content }}
-  <br>
-  <small>📍 {{ todo.location }}</small>
-</label>
-{% if todo.user_id != current_user.id %}
-<form action="{{ url_for('rent', material_id=todo.id) }}" method="POST">
-    <button type="submit" class="btn btn-success">Mieten</button>
-</form>
-{% endif %}
-              </form>
-            </li>
-          {% else %}
-            <div>...Keine Veröffentlichte Gegenstande❗</div>
-          {% endfor %}
-        </ul>
+                    type="checkbox"
+                    class="todo-checkbox"
+                    id="todo-{{ todo.id }}"
+                    name="complete"
+                    value="1"
+                    onchange="this.form.submit()">
 
-      <div class="todo-form">
-        <form action="." method="POST">
-          <div class="form-group">
-            <label for="contents">Insert Material</label>
+                <!-- Inhalt und Standort -->
+                <label for="todo-{{ todo.id }}" class="todo-content">
+                    {{ todo.content }}
+                    <br>
+                    <small>📍 {{ todo.location }}</small>
+                </label>
+
+                <!-- Mieten-Button nur bei fremden Gegenständen -->
+                {% if todo.user_id != current_user.id %}
+                <form action="{{ url_for('rent', material_id=todo.id) }}" method="POST">
+                    <button type="submit" class="btn btn-success">Mieten</button>
+                </form>
+                {% endif %}
+
+            </form>
+        </li>
+    {% else %}
+        <div>Keine Gegenstände vorhanden.</div>
+    {% endfor %}
+</ul>
+
+<!-- Neues Material hinzufügen -->
+<div class="todo-form">
+    <form action="." method="POST">
+        <div class="form-group">
+            <label for="contents">Gegenstand</label>
             <input type="text" id="contents" name="contents" class="form-control"
-              placeholder="Neuen Gegenstand eingeben..." required />
-          </div>
+                placeholder="Gegenstand eingeben..." required />
+        </div>
 
-          <div class="form-group">
-            <label for="due_at">Kategorie</label>
+        <div class="form-group">
+            <label for="category">Kategorie</label>
             <select id="category" name="category" class="form-control" required>
-              <option value="" disabled selected>Bitte wählen</option>
-              <option value="buecher">Bücher</option>
-              <option value="taschenrechner">Taschenrechner</option>
-              <option value="lineal_geodreieck">Lineal und Geodreieck</option>
-              <option value="zirkel">Zirkel</option>
-              <option value="schreibmaterial">Schreibmaterial</option>
+                <option value="" disabled selected>Bitte wählen</option>
+                <option value="buecher">Bücher</option>
+                <option value="taschenrechner">Taschenrechner</option>
+                <option value="lineal_geodreieck">Lineal & Geodreieck</option>
+                <option value="zirkel">Zirkel</option>
+                <option value="schreibmaterial">Schreibmaterial</option>
             </select>
-            <p class="help-block">Wähle die Kategorie zu der dein Gegenstand gehört.</p>
-          </div>
-<div class="form-group">
-  <label for="location">Ort</label>
-  <input
-    type="text"
-    id="location"
-    name="location"
-    class="form-control"
-    placeholder="z. B. Zimmer 512"
-    required>
-  <p class="help-block">Wo befindet sich der Gegenstand?</p>
+            <p class="help-block">Kategorie des Gegenstands auswählen.</p>
+        </div>
+
+        <div class="form-group">
+            <label for="location">Ort</label>
+            <input
+                type="text"
+                id="location"
+                name="location"
+                class="form-control"
+                placeholder="z. B. Zimmer 512"
+                required>
+            <p class="help-block">Wo befindet sich der Gegenstand?</p>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Hinzufügen</button>
+    </form>
 </div>
 
-          <button type="submit" class="btn btn-primary">Hinzufügen</button>
-        </form>
-      </div>
 {% endblock %}
 
   
