@@ -10,6 +10,7 @@ CREATE TABLE Material (
     user_id INT NOT NULL,
     content VARCHAR(100),
     cat VARCHAR(100),
+    location VARCHAR(100),
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
