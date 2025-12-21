@@ -21,6 +21,11 @@
   <br>
   <small>📍 {{ todo.location }}</small>
 </label>
+{% if todo.user_id != current_user.id %}
+<form action="{{ url_for('rent', material_id=todo.id) }}" method="POST">
+    <button type="submit" class="btn btn-success">Mieten</button>
+</form>
+{% endif %}
               </form>
             </li>
           {% else %}
