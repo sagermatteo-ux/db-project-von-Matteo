@@ -1,86 +1,78 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% extends "base.html" %}
 
-{% block content %}
-
-<!-- Benachrichtigungen -->
-<div class="notifications">
+<!-- 1️⃣ Notifications oben -->
+{% if notifications %}
+<div class="notifications mb-3">
     {% for note in notifications %}
         <div class="alert alert-info">{{ note.message }}</div>
     {% endfor %}
 </div>
+{% endif %}
 
-<!-- Liste der Gegenstände -->
-<ul class="todo-list">
+<!-- 2️⃣ Todo / Material Liste -->
+<ul class="todo-list list-unstyled">
     {% for todo in todos %}
-        <li class="todo-item">
-            <form action="/complete" method="POST" class="todo-complete-form">
-                <input type="hidden" name="id" value="{{ todo.id }}">
+    <li class="todo-item mb-2">
 
-                <!-- Checkbox für erledigte Gegenstände -->
-                <input
-                    type="checkbox"
-                    class="todo-checkbox"
-                    id="todo-{{ todo.id }}"
-                    name="complete"
-                    value="1"
-                    onchange="this.form.submit()">
+        <!-- Erledigt-Formular -->
+        <form action="/complete" method="POST" class="d-inline-block">
+            <input type="hidden" name="id" value="{{ todo.id }}">
+            <input
+                type="checkbox"
+                id="todo-{{ todo.id }}"
+                name="complete"
+                value="1"
+                class="todo-checkbox me-2"
+                onchange="this.form.submit()">
+            <label for="todo-{{ todo.id }}">
+                {{ todo.content }}
+                <br>
+                <small>📍 {{ todo.location }}</small>
+            </label>
+        </form>
 
-                <!-- Inhalt und Standort -->
-                <label for="todo-{{ todo.id }}" class="todo-content">
-                    {{ todo.content }}
-                    <br>
-                    <small>📍 {{ todo.location }}</small>
-                </label>
+        <!-- Mieten-Button nur für fremde Gegenstände -->
+        {% if todo.user_id != current_user.id %}
+        <form action="{{ url_for('rent', material_id=todo.id) }}" method="POST" class="d-inline-block ms-2">
+            <button type="submit" class="btn btn-success btn-sm">Mieten</button>
+        </form>
+        {% endif %}
 
-                <!-- Mieten-Button nur bei fremden Gegenständen -->
-                {% if todo.user_id != current_user.id %}
-                <form action="{{ url_for('rent', material_id=todo.id) }}" method="POST">
-                    <button type="submit" class="btn btn-success">Mieten</button>
-                </form>
-                {% endif %}
-
-            </form>
-        </li>
+    </li>
     {% else %}
-        <div>Keine Gegenstände vorhanden.</div>
+    <div class="text-muted">...Keine veröffentlichten Gegenstände❗</div>
     {% endfor %}
 </ul>
 
-<!-- Neues Material hinzufügen -->
-<div class="todo-form">
+<!-- 3️⃣ Formular für neues Material -->
+<div class="todo-form mt-4">
     <form action="." method="POST">
-        <div class="form-group">
-            <label for="contents">Gegenstand</label>
+        <div class="mb-3">
+            <label for="contents" class="form-label">Gegenstand einfügen</label>
             <input type="text" id="contents" name="contents" class="form-control"
-                placeholder="Gegenstand eingeben..." required />
+                   placeholder="Neuen Gegenstand eingeben..." required>
         </div>
 
-        <div class="form-group">
-            <label for="category">Kategorie</label>
-            <select id="category" name="category" class="form-control" required>
+        <div class="mb-3">
+            <label for="category" class="form-label">Kategorie</label>
+            <select id="category" name="category" class="form-select" required>
                 <option value="" disabled selected>Bitte wählen</option>
                 <option value="buecher">Bücher</option>
                 <option value="taschenrechner">Taschenrechner</option>
-                <option value="lineal_geodreieck">Lineal & Geodreieck</option>
+                <option value="lineal_geodreieck">Lineal und Geodreieck</option>
                 <option value="zirkel">Zirkel</option>
                 <option value="schreibmaterial">Schreibmaterial</option>
             </select>
-            <p class="help-block">Kategorie des Gegenstands auswählen.</p>
+            <div class="form-text">Wähle die Kategorie, zu der dein Gegenstand gehört.</div>
         </div>
 
-        <div class="form-group">
-            <label for="location">Ort</label>
-            <input
-                type="text"
-                id="location"
-                name="location"
-                class="form-control"
-                placeholder="z. B. Zimmer 512"
-                required>
-            <p class="help-block">Wo befindet sich der Gegenstand?</p>
+        <div class="mb-3">
+            <label for="location" class="form-label">Ort</label>
+            <input type="text" id="location" name="location" class="form-control"
+                   placeholder="z. B. Zimmer 512" required>
+            <div class="form-text">Wo befindet sich der Gegenstand?</div>
         </div>
 
         <button type="submit" class="btn btn-primary">Hinzufügen</button>
