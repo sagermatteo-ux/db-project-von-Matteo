@@ -6,8 +6,9 @@
     {% for todo in todos %}
         <li class="todo-item">
 
-            <!-- Formular für "Abschließen" -->
-            <form action="/complete" method="POST" class="todo-complete-form">
+            <!-- EIN Formular pro Item -->
+            <form method="POST" class="todo-complete-form">
+
                 <input type="hidden" name="id" value="{{ todo.id }}">
 
                 <input
@@ -16,28 +17,33 @@
                     id="todo-{{ todo.id }}"
                     name="complete"
                     value="1"
-                    onchange="this.form.submit()">
+                    onchange="this.form.action='/complete'; this.form.submit();">
 
                 <label for="todo-{{ todo.id }}" class="todo-content">
                     {{ todo.content }}<br>
                     <small>📍 {{ todo.location }} | Kategorie: {{ todo.cat }}</small>
                 </label>
-            </form>
 
-            <!-- Miet-Button (nur wenn nicht eigener Gegenstand) -->
-            {% if todo.user_id != current_user.id %}
-                {% if todo.requested %}
-                    <button class="btn btn-danger" disabled>
-                        Anfrage geschickt
-                    </button>
-                {% else %}
-                    <form action="{{ url_for('rent', material_id=todo.id) }}" method="POST">
-                        <button type="submit" class="btn btn-success">
+                <!-- 🔧 Button WIEDER AN ALTER POSITION -->
+                {% if todo.user_id != current_user.id %}
+                    {% if todo.requested %}
+                        <button
+                            type="button"
+                            class="btn btn-danger"
+                            disabled>
+                            Anfrage geschickt
+                        </button>
+                    {% else %}
+                        <button
+                            type="submit"
+                            class="btn btn-success"
+                            formaction="{{ url_for('rent', material_id=todo.id) }}">
                             Mieten
                         </button>
-                    </form>
+                    {% endif %}
                 {% endif %}
-            {% endif %}
+
+            </form>
 
         </li>
     {% else %}
@@ -45,7 +51,6 @@
     {% endfor %}
 </ul>
 
-<!-- Formular zum Hinzufügen eines neuen Gegenstands -->
 <div class="todo-form">
     <form action="." method="POST">
 
@@ -70,7 +75,6 @@
                 <option value="zirkel">Zirkel</option>
                 <option value="schreibmaterial">Schreibmaterial</option>
             </select>
-            <p class="help-block">Wähle die Kategorie zu der dein Gegenstand gehört.</p>
         </div>
 
         <div class="form-group">
@@ -82,7 +86,6 @@
                 class="form-control"
                 placeholder="z. B. Zimmer 512"
                 required>
-            <p class="help-block">Wo befindet sich der Gegenstand?</p>
         </div>
 
         <button type="submit" class="btn btn-primary">
