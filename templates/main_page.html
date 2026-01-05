@@ -6,7 +6,7 @@
     {% for todo in todos %}
         <li class="todo-item">
 
-            <!-- EIN Formular pro Item -->
+            
             <form method="POST" class="todo-complete-form">
 
                 <input type="hidden" name="id" value="{{ todo.id }}">
@@ -24,7 +24,7 @@
                     <small>📍 {{ todo.location }} | Kategorie: {{ todo.cat }}</small>
                 </label>
 
-                <!-- 🔧 Button WIEDER AN ALTER POSITION -->
+            
                 {% if todo.user_id != current_user.id %}
                     {% if todo.requested %}
                         <button
