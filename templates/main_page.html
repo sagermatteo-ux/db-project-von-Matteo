@@ -1,53 +1,66 @@
 {% extends "base.html" %}
 {% block content %}
 
-<ul class="todo-list" style="list-style: none; padding: 0;">
+<h2>Verfügbare Gegenstände</h2>
+<ul class="todo-list">
 {% for todo in todos %}
-<li style="border: 1px solid #ddd; padding: 10px; margin-bottom: 5px; border-radius: 5px;">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-        <label>
-            <strong>{{ todo[2] }}</strong><br>
-            <small>📍 {{ todo[4] }} | Kategorie: {{ todo[3] }}</small>
-        </label>
+<li class="todo-item">
 
-        {% if todo[1]|string != current_user.id|string %}
-            {% if todo[5] > 0 %}
-                <span class="request-badge">✔ Anfrage geschickt</span>
-            {% else %}
-                <form method="POST" action="{{ url_for('rent', material_id=todo[0]) }}">
-                    <button type="submit" class="btn btn-success">Mieten</button>
-                </form>
-            {% endif %}
+<form method="POST">
+
+    <label>
+        {{ todo[2] }}<br>
+        <small>📍 {{ todo[4] }} | Kategorie: {{ todo[3] }}</small>
+    </label>
+
+    {% if todo[1] != current_user.id %}
+        {% if todo[5] %}
+            <span class="request-badge">✔ Anfrage geschickt</span>
         {% else %}
-            <small style="color: gray;">(Dein Inserat)</small>
+            <button type="submit"
+                    class="btn btn-success"
+                    formaction="{{ url_for('rent', material_id=todo[0]) }}">
+                Mieten
+            </button>
         {% endif %}
-    </div>
+    {% endif %}
+
+</form>
 </li>
 {% else %}
-<div>...Keine Gegenstände vorhanden ❗</div>
+<div>...Keine veröffentlichten Gegenstände❗</div>
 {% endfor %}
 </ul>
 
-<div class="todo-form" style="margin-top: 20px; padding: 15px; background: #f9f9f9;">
-    <form method="POST">
-        <input name="contents" required placeholder="Gegenstand" style="display: block; width: 100%; margin-bottom: 5px;">
-        <select name="category" required style="display: block; width: 100%; margin-bottom: 5px;">
-            <option value="" disabled selected>Kategorie</option>
-            <option value="Bücher">Bücher</option>
-            <option value="Taschenrechner">Taschenrechner</option>
-            <option value="Zirkel">Zirkel</option>
-            <option value="Schreibmaterial">Schreibmaterial</option>
-        </select>
-        <input name="location" required placeholder="Ort" style="display: block; width: 100%; margin-bottom: 5px;">
-        <button class="btn btn-primary" style="width: 100%;">Hinzufügen</button>
-    </form>
+<h2>Neuen Gegenstand hinzufügen</h2>
+<div class="todo-form">
+<form method="POST">
+    <input name="contents" required placeholder="Gegenstand">
+    <select name="category" required>
+        <option value="" disabled selected>Kategorie</option>
+        <option value="buecher">Bücher</option>
+        <option value="taschenrechner">Taschenrechner</option>
+        <option value="lineal_geodreieck">Lineal & Geodreieck</option>
+        <option value="zirkel">Zirkel</option>
+        <option value="schreibmaterial">Schreibmaterial</option>
+    </select>
+    <input name="location" required placeholder="Ort">
+    <button class="btn btn-primary">Hinzufügen</button>
+</form>
 </div>
 
 <style>
-.request-badge { padding: 5px; background: #e2e3e5; border-radius: 4px; font-weight: bold; }
-.btn { cursor: pointer; padding: 8px; border-radius: 4px; border: none; }
-.btn-success { background: #28a745; color: white; }
-.btn-primary { background: #007bff; color: white; }
+.request-badge {
+    display: inline-block;
+    padding: 8px 14px;
+    background-color: #f8d7da;
+    color: #842029;
+    border: 2px solid #842029;
+    border-radius: 6px;
+    font-weight: bold;
+    margin-left: 10px;
+}
 </style>
+
 {% endblock %}
 
