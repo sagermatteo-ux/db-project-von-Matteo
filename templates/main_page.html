@@ -7,31 +7,33 @@
 
 <form method="POST">
 
-    <input type="hidden" name="id" value="{{ todo[0] }}">
+    <input type="hidden" name="id" value="{{ todo[0] }}">
 
-    <input type="checkbox"
-           onchange="this.form.action='/complete'; this.form.submit();">
+    <input type="checkbox"
+           onchange="this.form.action='/complete'; this.form.submit();">
 
-    <label>
-        {{ todo[2] }}<br>
-        <small>📍 {{ todo[4] }} | Kategorie: {{ todo[3] }}</small>
-    </label>
+    <label>
+        {{ todo[2] }}<br>
+        <small>📍 {{ todo[4] }} | Kategorie: {{ todo[3] }}</small>
+    </label>
 
-    {% if todo[1] != current_user.id %}
-        {% if todo[5] %}
-            <button class="btn btn-danger" disabled>
-                Anfrage geschickt
-            </button>
-        {% else %}
-            <button
-                type="submit"
-                class="btn btn-success rent-btn"
-                onclick="markAsRequested(this)"
-                formaction="{{ url_for('rent', material_id=todo[0]) }}">
-                Mieten
-            </button>
-        {% endif %}
-    {% endif %}
+    {% if todo[1] != current_user.id %}
+        {% if todo[5] %}
+            <!-- SCHILD: Anfrage bereits geschickt -->
+            <span class="request-badge">
+                ✔ Anfrage geschickt
+            </span>
+        {% else %}
+            <!-- MIETEN BUTTON -->
+            <button
+                type="submit"
+                class="btn btn-success rent-btn"
+                onclick="markAsRequested(this)"
+                formaction="{{ url_for('rent', material_id=todo[0]) }}">
+                Mieten
+            </button>
+        {% endif %}
+    {% endif %}
 
 </form>
 </li>
@@ -42,30 +44,48 @@
 
 <div class="todo-form">
 <form method="POST">
-    <input name="contents" required placeholder="Gegenstand">
-    <select name="category" required>
-        <option value="" disabled selected>Kategorie</option>
-        <option value="buecher">Bücher</option>
-        <option value="taschenrechner">Taschenrechner</option>
-        <option value="lineal_geodreieck">Lineal & Geodreieck</option>
-        <option value="zirkel">Zirkel</option>
-        <option value="schreibmaterial">Schreibmaterial</option>
-    </select>
-    <input name="location" required placeholder="Ort">
-    <button class="btn btn-primary">Hinzufügen</button>
+    <input name="contents" required placeholder="Gegenstand">
+    <select name="category" required>
+        <option value="" disabled selected>Kategorie</option>
+        <option value="buecher">Bücher</option>
+        <option value="taschenrechner">Taschenrechner</option>
+        <option value="lineal_geodreieck">Lineal & Geodreieck</option>
+        <option value="zirkel">Zirkel</option>
+        <option value="schreibmaterial">Schreibmaterial</option>
+    </select>
+    <input name="location" required placeholder="Ort">
+    <button class="btn btn-primary">Hinzufügen</button>
 </form>
 </div>
 
+<!-- STYLES -->
+<style>
+.request-badge {
+    display: inline-block;
+    padding: 8px 14px;
+    background-color: #f8d7da;
+    color: #842029;
+    border: 2px solid #842029;
+    border-radius: 6px;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+.rent-btn[disabled] {
+    cursor: default;
+    opacity: 0.8;
+}
+</style>
+
+<!-- JAVASCRIPT -->
 <script>
 function markAsRequested(button) {
-    button.innerText = "Anfrage geschickt";
-    button.classList.remove("btn-success");
-    button.classList.add("btn-danger");
-    button.disabled = true;
+    button.innerHTML = "✔ Anfrage geschickt";
+    button.classList.remove("btn-success");
+    button.classList.add("btn-danger");
+    button.disabled = true;
+    button.style.pointerEvents = "none";
 }
 </script>
 
 {% endblock %}
-
-
-  
