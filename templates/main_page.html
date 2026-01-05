@@ -7,8 +7,6 @@
 
 <form method="POST">
 
-    <input type="hidden" name="id" value="{{ todo[0] }}">
-
     <label>
         {{ todo[2] }}<br>
         <small>📍 {{ todo[4] }} | Kategorie: {{ todo[3] }}</small>
@@ -16,16 +14,11 @@
 
     {% if todo[1] != current_user.id %}
         {% if todo[5] %}
-            <!-- SCHILD: Anfrage bereits geschickt -->
-            <span class="request-badge">
-                ✔ Anfrage geschickt
-            </span>
+            <span class="request-badge">✔ Anfrage geschickt</span>
         {% else %}
-            <!-- MIETEN BUTTON -->
-            <button
-                type="submit"
-                class="btn btn-success rent-btn"
-                formaction="{{ url_for('rent', material_id=todo[0]) }}">
+            <button type="submit"
+                    class="btn btn-success"
+                    formaction="{{ url_for('rent', material_id=todo[0]) }}">
                 Mieten
             </button>
         {% endif %}
@@ -54,7 +47,6 @@
 </form>
 </div>
 
-<!-- STYLES -->
 <style>
 .request-badge {
     display: inline-block;
@@ -65,10 +57,6 @@
     border-radius: 6px;
     font-weight: bold;
     margin-left: 10px;
-}
-.rent-btn[disabled] {
-    cursor: default;
-    opacity: 0.8;
 }
 </style>
 
