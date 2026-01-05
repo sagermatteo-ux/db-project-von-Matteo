@@ -1,4 +1,4 @@
-/*
+TODOS.sql: /*
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(250) NOT NULL UNIQUE,
@@ -13,5 +13,4 @@ CREATE TABLE Material (
     location VARCHAR(100),
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
-
 
