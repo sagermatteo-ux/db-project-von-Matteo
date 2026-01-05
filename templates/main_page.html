@@ -7,30 +7,31 @@
 
 <form method="POST">
 
-<input type="hidden" name="id" value="{{ todo[0] }}">
+    <input type="hidden" name="id" value="{{ todo[0] }}">
 
-<input type="checkbox"
-       onchange="this.form.action='/complete'; this.form.submit();">
+    <input type="checkbox"
+           onchange="this.form.action='/complete'; this.form.submit();">
 
-<label>
-    {{ todo[2] }}<br>
-    <small>📍 {{ todo[4] }} | Kategorie: {{ todo[3] }}</small>
-</label>
+    <label>
+        {{ todo[2] }}<br>
+        <small>📍 {{ todo[4] }} | Kategorie: {{ todo[3] }}</small>
+    </label>
 
-{% if todo[1] != current_user.id %}
-    {% if todo[5] %}
-        <button class="btn btn-danger" disabled>
-            Anfrage geschickt
-        </button>
-    {% else %}
-        <button
-            type="submit"
-            class="btn btn-success"
-            formaction="{{ url_for('rent', material_id=todo[0]) }}">
-            Mieten
-        </button>
+    {% if todo[1] != current_user.id %}
+        {% if todo[5] %}
+            <button class="btn btn-danger" disabled>
+                Anfrage geschickt
+            </button>
+        {% else %}
+            <button
+                type="submit"
+                class="btn btn-success rent-btn"
+                onclick="markAsRequested(this)"
+                formaction="{{ url_for('rent', material_id=todo[0]) }}">
+                Mieten
+            </button>
+        {% endif %}
     {% endif %}
-{% endif %}
 
 </form>
 </li>
@@ -54,6 +55,15 @@
     <button class="btn btn-primary">Hinzufügen</button>
 </form>
 </div>
+
+<script>
+function markAsRequested(button) {
+    button.innerText = "Anfrage geschickt";
+    button.classList.remove("btn-success");
+    button.classList.add("btn-danger");
+    button.disabled = true;
+}
+</script>
 
 {% endblock %}
 
