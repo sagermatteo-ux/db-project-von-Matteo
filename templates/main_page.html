@@ -1,63 +1,64 @@
 {% extends "base.html" %}
 {% block content %}
 
-<ul class="todo-list">
-{% for todo in todos %}
-<li class="todo-item">
+<div style="max-width: 800px; margin: auto; padding: 20px;">
+    <h2>Verfügbares Equipment</h2>
 
-<form method="POST">
+    <ul style="list-style: none; padding: 0;">
+    {% for todo in todos %}
+    <li style="border: 1px solid #ddd; border-radius: 8px; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+        
+        <div>
+            <strong style="font-size: 1.1em;">{{ todo[2] }}</strong><br>
+            <small style="color: #666;">📍 {{ todo[4] }} | Kategorie: {{ todo[3] }}</small>
+        </div>
 
-    <label>
-        {{ todo[2] }}<br>
-        <small>📍 {{ todo[4] }} | Kategorie: {{ todo[3] }}</small>
-    </label>
+        <div>
+            {# Prüfen: Ist es NICHT mein eigener Artikel? #}
+            {% if todo[1]|string != current_user.id|string %}
+                
+                {# todo[5] ist das Ergebnis des COUNT(*) aus dem SQL #}
+                {% if todo[5] > 0 %}
+                    <span style="color: #198754; font-weight: bold; border: 1px solid #198754; padding: 5px 10px; border-radius: 4px;">
+                        ✔ Angefragt
+                    </span>
+                {% else %}
+                    <form method="POST" action="{{ url_for('rent', material_id=todo[0]) }}">
+                        <button type="submit" style="background-color: #198754; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">
+                            Mieten
+                        </button>
+                    </form>
+                {% endif %}
+            
+            {% else %}
+                <small style="color: #999; font-style: italic;">Mein Inserat</small>
+            {% endif %}
+        </div>
+    </li>
+    {% else %}
+    <p>Aktuell sind keine Gegenstände verfügbar.</p>
+    {% endfor %}
+    </ul>
 
-    {% if todo[1] != current_user.id %}
-        {% if todo[5] %}
-            <span class="request-badge">✔ Anfrage geschickt</span>
-        {% else %}
-            <button type="submit"
-                    class="btn btn-success"
-                    formaction="{{ url_for('rent', material_id=todo[0]) }}">
-                Mieten
+    <hr style="margin: 40px 0;">
+
+    <div style="background: #f4f4f4; padding: 20px; border-radius: 8px;">
+        <h3>Gegenstand verleihen</h3>
+        <form method="POST">
+            <input name="contents" required placeholder="Was leihst du her?" style="width: 100%; padding: 8px; margin-bottom: 10px;">
+            <select name="category" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                <option value="" disabled selected>Kategorie wählen</option>
+                <option value="Bücher">Bücher</option>
+                <option value="Taschenrechner">Taschenrechner</option>
+                <option value="Schreibmaterial">Schreibmaterial</option>
+                <option value="Sonstiges">Sonstiges</option>
+            </select>
+            <input name="location" required placeholder="Abholort (z.B. Mensa)" style="width: 100%; padding: 8px; margin-bottom: 10px;">
+            <button type="submit" style="width: 100%; background-color: #0d6efd; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer;">
+                Veröffentlichen
             </button>
-        {% endif %}
-    {% endif %}
-
-</form>
-</li>
-{% else %}
-<div>...Keine veröffentlichten Gegenstände❗</div>
-{% endfor %}
-</ul>
-
-<div class="todo-form">
-<form method="POST">
-    <input name="contents" required placeholder="Gegenstand">
-    <select name="category" required>
-        <option value="" disabled selected>Kategorie</option>
-        <option value="buecher">Bücher</option>
-        <option value="taschenrechner">Taschenrechner</option>
-        <option value="lineal_geodreieck">Lineal & Geodreieck</option>
-        <option value="zirkel">Zirkel</option>
-        <option value="schreibmaterial">Schreibmaterial</option>
-    </select>
-    <input name="location" required placeholder="Ort">
-    <button class="btn btn-primary">Hinzufügen</button>
-</form>
+        </form>
+    </div>
 </div>
 
-<style>
-.request-badge {
-    display: inline-block;
-    padding: 8px 14px;
-    background-color: #f8d7da;
-    color: #842029;
-    border: 2px solid #842029;
-    border-radius: 6px;
-    font-weight: bold;
-    margin-left: 10px;
-}
-</style>
-
-{% endblock %} 
+{% endblock %}
