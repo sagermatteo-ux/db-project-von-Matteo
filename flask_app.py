@@ -14,20 +14,17 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
 )
 
-# Load .env variables
 load_dotenv()
 W_SECRET = os.getenv("W_SECRET")
 
-# Init flask app
 app = Flask(__name__)
 app.config["DEBUG"] = True
 app.secret_key = "supersecret"
 
-# Init auth
 login_manager.init_app(app)
 login_manager.login_view = "login"
 
-# DON'T CHANGE
+
 def is_valid_signature(x_hub_signature, data, private_key):
     hash_algorithm, github_signature = x_hub_signature.split('=', 1)
     algorithm = hashlib.__dict__.get(hash_algorithm)
@@ -35,7 +32,7 @@ def is_valid_signature(x_hub_signature, data, private_key):
     mac = hmac.new(encoded_key, msg=data, digestmod=algorithm)
     return hmac.compare_digest(mac.hexdigest(), github_signature)
 
-# DON'T CHANGE
+
 @app.post('/update_server')
 def webhook():
     x_hub_signature = request.headers.get('X-Hub-Signature')
@@ -44,65 +41,35 @@ def webhook():
         origin = repo.remotes.origin
         origin.pull()
         return 'Updated PythonAnywhere successfully', 200
-    return 'Unathorized', 401
+    return 'Unauthorized', 401
 
-# Auth routes
-@app.get("/users")
-def users():
-    return render_template("users.html");
+
+# ---------------- AUTH ----------------
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     error = None
-
     if request.method == "POST":
-        user = authenticate(
-            request.form["username"],
-            request.form["password"]
-        )
-
+        user = authenticate(request.form["username"], request.form["password"])
         if user:
             login_user(user)
             return redirect(url_for("index"))
-
         error = "Benutzername oder Passwort ist falsch."
-
-    return render_template(
-        "auth.html",
-        title="In dein Konto einloggen",
-        action=url_for("login"),
-        button_label="Einloggen",
-        error=error,
-        footer_text="Noch kein Konto?",
-        footer_link_url=url_for("register"),
-        footer_link_label="Registrieren"
-    )
+    return render_template("auth.html", title="Login", action=url_for("login"),
+                           button_label="Einloggen", error=error)
 
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
     error = None
-
     if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
-
-        ok = register_user(username, password)
+        ok = register_user(request.form["username"], request.form["password"])
         if ok:
             return redirect(url_for("login"))
-
         error = "Benutzername existiert bereits."
+    return render_template("auth.html", title="Register", action=url_for("register"),
+                           button_label="Registrieren", error=error)
 
-    return render_template(
-        "auth.html",
-        title="Neues Konto erstellen",
-        action=url_for("register"),
-        button_label="Registrieren",
-        error=error,
-        footer_text="Du hast bereits ein Konto?",
-        footer_link_url=url_for("login"),
-        footer_link_label="Einloggen"
-    )
 
 @app.route("/logout")
 @login_required
@@ -111,28 +78,61 @@ def logout():
     return redirect(url_for("index"))
 
 
+# ---------------- APP ----------------
 
-# App routes
 @app.route("/", methods=["GET", "POST"])
 @login_required
 def index():
-    # GET
     if request.method == "GET":
-        todos = db_read("SELECT id, content, cat FROM Material", ())
+        todos = db_read("""
+            SELECT 
+                m.id,
+                m.user_id,
+                m.content,
+                m.cat,
+                m.location,
+                EXISTS (
+                    SELECT 1 FROM RentRequests r
+                    WHERE r.material_id = m.id
+                    AND r.requester_id = %s
+                ) AS requested
+            FROM Material m
+        """, (current_user.id,))
+
         return render_template("main_page.html", todos=todos)
 
-    # POST
-    content = request.form["contents"]
-    cat = request.form["category"]
-    db_write("INSERT INTO Material (user_id, content, cat) VALUES (%s, %s, %s)", (current_user.id, content, cat, ))
+    db_write(
+        "INSERT INTO Material (user_id, content, cat, location) VALUES (%s, %s, %s, %s)",
+        (
+            current_user.id,
+            request.form["contents"],
+            request.form["category"],
+            request.form["location"],
+        )
+    )
     return redirect(url_for("index"))
+
+
+@app.post("/rent/<int:material_id>")
+@login_required
+def rent(material_id):
+    db_write(
+        "INSERT IGNORE INTO RentRequests (material_id, requester_id) VALUES (%s, %s)",
+        (material_id, current_user.id)
+    )
+    return redirect(url_for("index"))
+
 
 @app.post("/complete")
 @login_required
 def complete():
-    todo_id = request.form.get("id")
-    db_write("DELETE FROM Material WHERE user_id=%s AND id=%s", (current_user.id, todo_id,))
+    db_write(
+        "DELETE FROM Material WHERE id=%s AND user_id=%s",
+        (request.form["id"], current_user.id)
+    )
     return redirect(url_for("index"))
+
 
 if __name__ == "__main__":
     app.run()
+    
