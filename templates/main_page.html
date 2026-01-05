@@ -5,8 +5,11 @@
 <ul class="todo-list">
     {% for todo in todos %}
         <li class="todo-item">
+
+            <!-- Formular für "Abschließen" -->
             <form action="/complete" method="POST" class="todo-complete-form">
                 <input type="hidden" name="id" value="{{ todo.id }}">
+
                 <input
                     type="checkbox"
                     class="todo-checkbox"
@@ -14,30 +17,49 @@
                     name="complete"
                     value="1"
                     onchange="this.form.submit()">
+
                 <label for="todo-{{ todo.id }}" class="todo-content">
-                    {{ todo.content }}
-                    <br>
+                    {{ todo.content }}<br>
                     <small>📍 {{ todo.location }} | Kategorie: {{ todo.cat }}</small>
                 </label>
-                {% if todo.user_id != current_user.id %}
-                <form action="{{ url_for('rent', material_id=todo.id) }}" method="POST">
-                    <button type="submit" class="btn btn-success">Mieten</button>
-                </form>
-                {% endif %}
             </form>
+
+            <!-- Miet-Button (nur wenn nicht eigener Gegenstand) -->
+            {% if todo.user_id != current_user.id %}
+                {% if todo.requested %}
+                    <button class="btn btn-danger" disabled>
+                        Anfrage geschickt
+                    </button>
+                {% else %}
+                    <form action="{{ url_for('rent', material_id=todo.id) }}" method="POST">
+                        <button type="submit" class="btn btn-success">
+                            Mieten
+                        </button>
+                    </form>
+                {% endif %}
+            {% endif %}
+
         </li>
     {% else %}
         <div>...Keine veröffentlichten Gegenstände❗</div>
     {% endfor %}
 </ul>
 
+<!-- Formular zum Hinzufügen eines neuen Gegenstands -->
 <div class="todo-form">
     <form action="." method="POST">
+
         <div class="form-group">
             <label for="contents">Insert Material</label>
-            <input type="text" id="contents" name="contents" class="form-control"
-                placeholder="Neuen Gegenstand eingeben..." required />
+            <input
+                type="text"
+                id="contents"
+                name="contents"
+                class="form-control"
+                placeholder="Neuen Gegenstand eingeben..."
+                required>
         </div>
+
         <div class="form-group">
             <label for="category">Kategorie</label>
             <select id="category" name="category" class="form-control" required>
@@ -50,6 +72,7 @@
             </select>
             <p class="help-block">Wähle die Kategorie zu der dein Gegenstand gehört.</p>
         </div>
+
         <div class="form-group">
             <label for="location">Ort</label>
             <input
@@ -61,7 +84,11 @@
                 required>
             <p class="help-block">Wo befindet sich der Gegenstand?</p>
         </div>
-        <button type="submit" class="btn btn-primary">Hinzufügen</button>
+
+        <button type="submit" class="btn btn-primary">
+            Hinzufügen
+        </button>
+
     </form>
 </div>
 
