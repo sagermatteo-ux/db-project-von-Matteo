@@ -13,5 +13,13 @@ CREATE TABLE Material (
     location VARCHAR(100),
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
-
+CREATE TABLE RentRequests (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    material_id INT NOT NULL,
+    requester_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(material_id, requester_id),
+    FOREIGN KEY (material_id) REFERENCES Material(id) ON DELETE CASCADE,
+    FOREIGN KEY (requester_id) REFERENCES users(id) ON DELETE CASCADE
+);
 
