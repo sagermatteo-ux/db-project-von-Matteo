@@ -1,64 +1,53 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div style="max-width: 800px; margin: auto; padding: 20px;">
-    <h2>Verfügbares Equipment</h2>
+<ul class="todo-list" style="list-style: none; padding: 0;">
+{% for todo in todos %}
+<li style="border: 1px solid #ddd; padding: 10px; margin-bottom: 5px; border-radius: 5px;">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <label>
+            <strong>{{ todo[2] }}</strong><br>
+            <small>📍 {{ todo[4] }} | Kategorie: {{ todo[3] }}</small>
+        </label>
 
-    <ul style="list-style: none; padding: 0;">
-    {% for todo in todos %}
-    <li style="border: 1px solid #ddd; border-radius: 8px; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
-        
-        <div>
-            <strong style="font-size: 1.1em;">{{ todo[2] }}</strong><br>
-            <small style="color: #666;">📍 {{ todo[4] }} | Kategorie: {{ todo[3] }}</small>
-        </div>
-
-        <div>
-            {# Prüfen: Ist es NICHT mein eigener Artikel? #}
-            {% if todo[1]|string != current_user.id|string %}
-                
-                {# todo[5] ist das Ergebnis des COUNT(*) aus dem SQL #}
-                {% if todo[5] > 0 %}
-                    <span style="color: #198754; font-weight: bold; border: 1px solid #198754; padding: 5px 10px; border-radius: 4px;">
-                        ✔ Angefragt
-                    </span>
-                {% else %}
-                    <form method="POST" action="{{ url_for('rent', material_id=todo[0]) }}">
-                        <button type="submit" style="background-color: #198754; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">
-                            Mieten
-                        </button>
-                    </form>
-                {% endif %}
-            
+        {% if todo[1]|string != current_user.id|string %}
+            {% if todo[5] > 0 %}
+                <span class="request-badge">✔ Anfrage geschickt</span>
             {% else %}
-                <small style="color: #999; font-style: italic;">Mein Inserat</small>
+                <form method="POST" action="{{ url_for('rent', material_id=todo[0]) }}">
+                    <button type="submit" class="btn btn-success">Mieten</button>
+                </form>
             {% endif %}
-        </div>
-    </li>
-    {% else %}
-    <p>Aktuell sind keine Gegenstände verfügbar.</p>
-    {% endfor %}
-    </ul>
-
-    <hr style="margin: 40px 0;">
-
-    <div style="background: #f4f4f4; padding: 20px; border-radius: 8px;">
-        <h3>Gegenstand verleihen</h3>
-        <form method="POST">
-            <input name="contents" required placeholder="Was leihst du her?" style="width: 100%; padding: 8px; margin-bottom: 10px;">
-            <select name="category" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
-                <option value="" disabled selected>Kategorie wählen</option>
-                <option value="Bücher">Bücher</option>
-                <option value="Taschenrechner">Taschenrechner</option>
-                <option value="Schreibmaterial">Schreibmaterial</option>
-                <option value="Sonstiges">Sonstiges</option>
-            </select>
-            <input name="location" required placeholder="Abholort (z.B. Mensa)" style="width: 100%; padding: 8px; margin-bottom: 10px;">
-            <button type="submit" style="width: 100%; background-color: #0d6efd; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer;">
-                Veröffentlichen
-            </button>
-        </form>
+        {% else %}
+            <small style="color: gray;">(Dein Inserat)</small>
+        {% endif %}
     </div>
+</li>
+{% else %}
+<div>...Keine Gegenstände vorhanden ❗</div>
+{% endfor %}
+</ul>
+
+<div class="todo-form" style="margin-top: 20px; padding: 15px; background: #f9f9f9;">
+    <form method="POST">
+        <input name="contents" required placeholder="Gegenstand" style="display: block; width: 100%; margin-bottom: 5px;">
+        <select name="category" required style="display: block; width: 100%; margin-bottom: 5px;">
+            <option value="" disabled selected>Kategorie</option>
+            <option value="Bücher">Bücher</option>
+            <option value="Taschenrechner">Taschenrechner</option>
+            <option value="Zirkel">Zirkel</option>
+            <option value="Schreibmaterial">Schreibmaterial</option>
+        </select>
+        <input name="location" required placeholder="Ort" style="display: block; width: 100%; margin-bottom: 5px;">
+        <button class="btn btn-primary" style="width: 100%;">Hinzufügen</button>
+    </form>
 </div>
 
+<style>
+.request-badge { padding: 5px; background: #e2e3e5; border-radius: 4px; font-weight: bold; }
+.btn { cursor: pointer; padding: 8px; border-radius: 4px; border: none; }
+.btn-success { background: #28a745; color: white; }
+.btn-primary { background: #007bff; color: white; }
+</style>
 {% endblock %}
+
