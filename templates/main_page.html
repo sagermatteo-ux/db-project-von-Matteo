@@ -2,14 +2,16 @@
 {% block content %}
 
 <h2>Verfügbare Gegenstände</h2>
+
 <ul class="todo-list">
 {% for todo in todos %}
 <li class="todo-item">
 
-<form method="POST">
+<form method="POST"
+      action="{{ url_for('rent', material_id=todo[0]) }}">
 
     <label>
-        {{ todo[2] }}<br>
+        <strong>{{ todo[2] }}</strong><br>
         <small>📍 {{ todo[4] }} | Kategorie: {{ todo[3] }}</small>
     </label>
 
@@ -17,23 +19,21 @@
         {% if todo[5] %}
             <span class="request-badge">✔ Anfrage geschickt</span>
         {% else %}
-            <button type="submit"
-                    class="btn btn-success"
-                    formaction="{{ url_for('rent', material_id=todo[0]) }}">
+            <button type="submit" class="btn btn-success">
                 Mieten
             </button>
         {% endif %}
     {% endif %}
 
 </form>
+
 </li>
 {% else %}
-<div>...Keine veröffentlichten Gegenstände❗</div>
+<div>❗ Keine veröffentlichten Gegenstände</div>
 {% endfor %}
 </ul>
 
 <h2>Neuen Gegenstand hinzufügen</h2>
-<div class="todo-form">
 <form method="POST">
     <input name="contents" required placeholder="Gegenstand">
     <select name="category" required>
@@ -47,9 +47,17 @@
     <input name="location" required placeholder="Ort">
     <button class="btn btn-primary">Hinzufügen</button>
 </form>
-</div>
 
 <style>
+.todo-list {
+    list-style: none;
+    padding: 0;
+}
+
+.todo-item {
+    margin-bottom: 15px;
+}
+
 .request-badge {
     display: inline-block;
     padding: 8px 14px;
