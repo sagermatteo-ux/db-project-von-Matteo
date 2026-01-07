@@ -1,66 +1,110 @@
 from flask import Flask, redirect, render_template, request, url_for
-from flask_login import LoginManager, login_user, logout_user, login_required, current_user
-from db import db_read, db_write  # Dein DB-Layer, muss commit() in db_write haben
-from werkzeug.security import generate_password_hash, check_password_hash
+from dotenv import load_dotenv
+import os
+import git
+import hmac
+import hashlib
+from db import db_read, db_write
+from auth import login_manager, authenticate, register_user
+from flask_login import login_user, logout_user, login_required, current_user
+import logging
 
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+)
+
+# Load .env variables
+load_dotenv()
+W_SECRET = os.getenv("W_SECRET")
+
+# Init flask app
 app = Flask(__name__)
-app.secret_key = "supersecret"
 app.config["DEBUG"] = True
+app.secret_key = "supersecret"
 
-login_manager = LoginManager()
+# Init auth
 login_manager.init_app(app)
 login_manager.login_view = "login"
 
-# ---------------- User Loader ----------------
-@login_manager.user_loader
-def load_user(user_id):
-    # Lädt User aus der DB
-    user = db_read("SELECT id, username, password FROM users WHERE id=%s", (user_id,))
-    if user:
-        row = user[0]
-        class UserObj:
-            def __init__(self, id, username):
-                self.id = id
-                self.username = username
-                self.is_authenticated = True
-            def is_active(self): return True
-            def is_anonymous(self): return False
-            def get_id(self): return str(self.id)
-        return UserObj(row[0], row[1])
-    return None
+# DON'T CHANGE
+def is_valid_signature(x_hub_signature, data, private_key):
+    hash_algorithm, github_signature = x_hub_signature.split('=', 1)
+    algorithm = hashlib.__dict__.get(hash_algorithm)
+    encoded_key = bytes(private_key, 'latin-1')
+    mac = hmac.new(encoded_key, msg=data, digestmod=algorithm)
+    return hmac.compare_digest(mac.hexdigest(), github_signature)
 
-# ---------------- Auth Routes ----------------
+# DON'T CHANGE
+@app.post('/update_server')
+def webhook():
+    x_hub_signature = request.headers.get('X-Hub-Signature')
+    if is_valid_signature(x_hub_signature, request.data, W_SECRET):
+        repo = git.Repo('./mysite')
+        origin = repo.remotes.origin
+        origin.pull()
+        return 'Updated PythonAnywhere successfully', 200
+    return 'Unathorized', 401
+
+# Auth routes
 @app.route("/login", methods=["GET", "POST"])
 def login():
     error = None
+
     if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
-        user = db_read("SELECT id, username, password FROM users WHERE username=%s", (username,))
-        if user and check_password_hash(user[0][2], password):
-            login_user(load_user(user[0][0]))
+        user = authenticate(
+            request.form["username"],
+            request.form["password"]
+        )
+
+        if user:
+            login_user(user)
             return redirect(url_for("index"))
-        error = "Login fehlgeschlagen"
-    return render_template("auth.html", error=error)
+
+        error = "Benutzername oder Passwort ist falsch."
+
+    return render_template(
+        "auth.html",
+        title="In dein Konto einloggen",
+        action=url_for("login"),
+        button_label="Einloggen",
+        error=error,
+        footer_text="Noch kein Konto?",
+        footer_link_url=url_for("register"),
+        footer_link_label="Registrieren"
+    )
+
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
     error = None
+
     if request.method == "POST":
         username = request.form["username"]
-        password = generate_password_hash(request.form["password"])
-        try:
-            db_write("INSERT INTO users (username, password) VALUES (%s, %s)", (username, password))
+        password = request.form["password"]
+
+        ok = register_user(username, password)
+        if ok:
             return redirect(url_for("login"))
-        except:
-            error = "Benutzer existiert bereits"
-    return render_template("auth.html", error=error)
+
+        error = "Benutzername existiert bereits."
+
+    return render_template(
+        "auth.html",
+        title="Neues Konto erstellen",
+        action=url_for("register"),
+        button_label="Registrieren",
+        error=error,
+        footer_text="Du hast bereits ein Konto?",
+        footer_link_url=url_for("login"),
+        footer_link_label="Einloggen"
+    )
 
 @app.route("/logout")
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for("login"))
+    return redirect(url_for("index"))
 
 # ---------------- Main App ----------------
 @app.route("/", methods=["GET", "POST"])
