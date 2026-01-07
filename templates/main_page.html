@@ -8,15 +8,15 @@
 <li class="todo-item">
 
 <form method="POST"
-      action="{{ url_for('rent', material_id=todo[0]) }}">
+      action="{{ url_for('rent', material_id=todo.id) }}">
 
     <label>
-        <strong>{{ todo[2] }}</strong><br>
-        <small>📍 {{ todo[4] }} | Kategorie: {{ todo[3] }}</small>
+        <strong>{{ todo.content }}</strong><br>
+        <small>📍 {{ todo.location }} | Kategorie: {{ todo.cat }}</small>
     </label>
 
-    {% if todo[1] != current_user.id %}
-        {% if todo[5] %}
+    {% if todo.user_id != current_user.id %}
+        {% if todo.requested %}
             <span class="request-badge">✔ Anfrage geschickt</span>
         {% else %}SELECT 
                 m.id, m.user_id, m.content, m.cat, m.location,
