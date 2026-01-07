@@ -17,18 +17,45 @@
 
     <style>
       body { background-color: #aaaaaa; }
-      .todo-list { margin-top: 30px; list-style: none; padding: 0; }
-      .todo-item {
-        position: relative; background: #fff;
-        padding: 16px 20px 12px 20px; margin-bottom: 16px; border-radius: 8px;
-       
+
+      .todo-list {
+        margin-top: 30px;
+        list-style: none;
+        padding: 0;
       }
+
+      .todo-item {
+        position: relative;
+        background: #fff;
+        padding: 16px 20px 12px 20px;
+        margin-bottom: 16px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+        line-height: 1.5;
+      }
+
       .todo-content { font-weight: 600; }
-      .todo-date { display: block; color: #999; font-size: 0.9em; margin-top: 6px; }
-      .todo-form { margin-top: 28px; background: #fff; padding: 16px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-      .todo-item { display: block; }
-      .todo-content { font-weight: 600; flex: 1; }
+      .todo-date {
+        display: block;
+        color: #999;
+        font-size: 0.9em;
+        margin-top: 6px;
+      }
+
+      .todo-form {
+        margin-top: 28px;
+        background: #fff;
+        padding: 16px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      }
+
       .navbar-brand { font-weight: 600; }
+
+      /* ❌ Alle Todo-Checkboxen deaktivieren */
+      input[type="checkbox"] {
+        display: none !important;
+      }
     </style>
   </head>
 
@@ -50,16 +77,13 @@
           <ul class="nav navbar-nav navbar-right">
 
             {% if current_user.is_authenticated %}
-
               <li><a href="#">Hallo, {{ current_user.username }}</a></li>
               <li><a href="{{ url_for('logout') }}">Logout</a></li>
-
             {% else %}
-
               <li><a href="{{ url_for('login') }}">Login</a></li>
               <li><a href="{{ url_for('register') }}">Registrieren</a></li>
-
             {% endif %}
+
           </ul>
         </div>
       </div>
@@ -68,6 +92,7 @@
     <div class="container">
         {% block content %}{% endblock %}
     </div>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
   </body>
