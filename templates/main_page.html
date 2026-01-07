@@ -18,14 +18,7 @@
     {% if todo.user_id != current_user.id %}
         {% if todo.requested %}
             <span class="request-badge">✔ Anfrage geschickt</span>
-        {% else %}SELECT 
-                m.id, m.user_id, m.content, m.cat, m.location,
-                EXISTS (
-                    SELECT 1 FROM RentRequests r
-                    WHERE r.material_id = m.id
-                    AND r.requester_id = 6
-                ) AS requested
-            FROM Material m;
+        {% else %}
             <button type="submit" class="btn btn-success">
                 Mieten
             </button>
