@@ -103,3 +103,7 @@ def rent(material_id):
     except Exception as e:
         print("Rent SQL ERROR:", e)
     return redirect(url_for("index"))
+
+
+if __name__ == "__main__":
+    app.run()
