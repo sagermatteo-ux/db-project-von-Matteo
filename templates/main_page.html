@@ -5,41 +5,60 @@
 <ul class="todo-list">
 {% for todo in todos %}
 <li class="todo-item">
-
-{% if todo.user_id != current_user.id %}
-<form method="POST" action="{{ url_for('rent', material_id=todo.id) }}">
+    {% if todo.user_id != current_user.id %}
+    <form method="POST" action="{{ url_for('rent', material_id=todo.id) }}">
+        <label>
+            <strong>{{ todo.content }}</strong><br>
+            <small>📍 {{ todo.location }} | Kategorie: {{ todo.cat }}</small>
+        </label>
+        {% if todo.requested %}
+            <span class="request-badge">✔ Anfrage geschickt</span>
+        {% else %}
+            <button type="submit" class="btn btn-success">Mieten</button>
+        {% endif %}
+    </form>
+    {% else %}
     <label>
         <strong>{{ todo.content }}</strong><br>
         <small>📍 {{ todo.location }} | Kategorie: {{ todo.cat }}</small>
     </label>
-
-    {% if todo.status == 'pending' %}
-        <span class="request-badge pending">✔ Anfrage geschickt</span>
-    {% elif todo.status == 'accepted' %}
-        <span class="request-badge accepted">✔ Anfrage akzeptiert</span>
-    {% elif todo.status == 'rejected' %}
-        <span class="request-badge rejected">✖ Anfrage abgelehnt</span>
-    {% else %}
-        <button type="submit" class="btn btn-success">Mieten</button>
+    <form method="POST" action="{{ url_for('delete_material', material_id=todo.id) }}" style="display:inline">
+        <button type="submit" class="btn btn-danger" onclick="return confirm('Willst du diesen Gegenstand wirklich löschen?');">
+            Löschen
+        </button>
+    </form>
     {% endif %}
-</form>
-
-{% else %}
-<label>
-    <strong>{{ todo.content }}</strong><br>
-    <small>📍 {{ todo.location }} | Kategorie: {{ todo.cat }}</small>
-</label>
-
-<form method="POST" action="{{ url_for('delete_material', material_id=todo.id) }}" style="display:inline">
-    <button class="btn btn-danger" onclick="return confirm('Willst du diesen Gegenstand wirklich löschen?');">
-        Löschen
-    </button>
-</form>
-{% endif %}
-
 </li>
 {% else %}
-<p>❗ Keine veröffentlichten Gegenstände</p>
+<div>❗ Keine veröffentlichten Gegenstände</div>
+{% endfor %}
+</ul>
+
+<h2>Offene Anfragen für deine Gegenstände</h2>
+<ul>
+{% for r in requests %}
+<li>
+    {{ r.requester_name }} möchte {{ r.material_name }} mieten
+    <form method="POST" action="{{ url_for('accept_request', req_id=r.id) }}" style="display:inline">
+        <button class="btn btn-success">Akzeptieren</button>
+    </form>
+    <form method="POST" action="{{ url_for('reject_request', req_id=r.id) }}" style="display:inline">
+        <button class="btn btn-warning">Ablehnen</button>
+    </form>
+</li>
+{% else %}
+<div>Keine offenen Anfragen</div>
+{% endfor %}
+</ul>
+
+<h2>Benachrichtigungen</h2>
+<ul>
+{% for n in notifications %}
+<li {% if not n.is_read %}style="font-weight:bold"{% endif %}>
+    {{ n.message }} ({{ n.material_name }})
+</li>
+{% else %}
+<div>Keine Benachrichtigungen</div>
 {% endfor %}
 </ul>
 
@@ -47,7 +66,7 @@
 <form method="POST">
     <input name="contents" required placeholder="Gegenstand">
     <select name="category" required>
-        <option disabled selected>Kategorie</option>
+        <option value="" disabled selected>Kategorie</option>
         <option value="buecher">Bücher</option>
         <option value="taschenrechner">Taschenrechner</option>
         <option value="lineal_geodreieck">Lineal & Geodreieck</option>
@@ -61,13 +80,13 @@
 <style>
 .todo-list { list-style: none; padding: 0; }
 .todo-item { margin-bottom: 15px; }
-
-.request-badge { padding: 6px 12px; border-radius:6px; font-weight:bold; margin-left:10px; }
-.request-badge.pending { background:#fff3cd; color:#664d03; }
-.request-badge.accepted { background:#d1e7dd; color:#0f5132; }
-.request-badge.rejected { background:#f8d7da; color:#842029; }
-
-.btn-danger { background:#dc3545; color:white; border:none; padding:8px 14px; border-radius:6px; }
+.request-badge { display: inline-block; padding: 8px 14px; background-color: #f8d7da; color: #842029; border: 2px solid #842029; border-radius: 6px; font-weight: bold; margin-left: 10px; }
+.btn-danger { background-color: #dc3545; border: none; color: white; padding: 8px 14px; border-radius: 6px; cursor: pointer; }
+.btn-danger:hover { background-color: #bb2d3b; }
+.btn-success { background-color: #198754; border: none; color: white; padding: 8px 10px; border-radius: 6px; cursor: pointer; }
+.btn-success:hover { background-color: #146c43; }
+.btn-warning { background-color: #ffc107; border: none; color: black; padding: 8px 10px; border-radius: 6px; cursor: pointer; }
+.btn-warning:hover { background-color: #e0a800; }
 </style>
 
 {% endblock %}
