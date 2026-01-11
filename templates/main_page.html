@@ -7,15 +7,16 @@
 {% for todo in todos %}
 <li class="todo-item">
 
-<form method="POST"
-      action="{{ url_for('rent', material_id=todo.id) }}">
-
-    <label>
-        <strong>{{ todo.content }}</strong><br>
-        <small>📍 {{ todo.location }} | Kategorie: {{ todo.cat }}</small>
-    </label>
-
+    <!-- FORM für MIETEN -->
     {% if todo.user_id != current_user.id %}
+    <form method="POST"
+          action="{{ url_for('rent', material_id=todo.id) }}">
+
+        <label>
+            <strong>{{ todo.content }}</strong><br>
+            <small>📍 {{ todo.location }} | Kategorie: {{ todo.cat }}</small>
+        </label>
+
         {% if todo.requested %}
             <span class="request-badge">✔ Anfrage geschickt</span>
         {% else %}
@@ -23,9 +24,25 @@
                 Mieten
             </button>
         {% endif %}
-    {% endif %}
+    </form>
 
-</form>
+    {% else %}
+    <!-- EIGENER GEGENSTAND → LÖSCHEN -->
+    <label>
+        <strong>{{ todo.content }}</strong><br>
+        <small>📍 {{ todo.location }} | Kategorie: {{ todo.cat }}</small>
+    </label>
+
+    <form method="POST"
+          action="{{ url_for('delete_material', material_id=todo.id) }}"
+          style="display:inline">
+        <button type="submit"
+                class="btn btn-danger"
+                onclick="return confirm('Willst du diesen Gegenstand wirklich löschen?');">
+            Löschen
+        </button>
+    </form>
+    {% endif %}
 
 </li>
 {% else %}
@@ -67,6 +84,19 @@
     border-radius: 6px;
     font-weight: bold;
     margin-left: 10px;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border: none;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-danger:hover {
+    background-color: #bb2d3b;
 }
 </style>
 
