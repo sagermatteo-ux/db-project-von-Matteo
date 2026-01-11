@@ -17,8 +17,19 @@
             <small>📍 {{ todo.location }} | Kategorie: {{ todo.cat }}</small>
         </label>
 
-        {% if todo.requested %}
+        {% if todo.status == 'pending' %}
             <span class="request-badge">✔ Anfrage geschickt</span>
+
+        {% elif todo.status == 'accepted' %}
+            <span class="request-badge accepted">
+                ✔ Anfrage akzeptiert
+            </span>
+
+        {% elif todo.status == 'rejected' %}
+            <span class="request-badge rejected">
+                ✖ Anfrage abgelehnt
+            </span>
+
         {% else %}
             <button type="submit" class="btn btn-success">
                 Mieten

@@ -121,15 +121,10 @@ def index():
     # GET: Todos laden + prüfen, ob User bereits angefragt hat
     try:
         todos = db_read("""
-            SELECT 
-                m.id, m.user_id, m.content, m.cat, m.location,
-                EXISTS (
-                    SELECT 1 FROM RentRequests r
-                    WHERE r.material_id = m.id
-                    AND r.requester_id = %s
-                ) AS requested
+            SELECT m.id, m.user_id, m.content, m.cat, m.location, r.status, (r.requester_id = %s) AS requested
             FROM Material m
-        """, (current_user.id,))
+                LEFT JOIN RentRequests r ON  m.id = r.material_id;
+            """, (current_user.id,))
     except Exception as e:
         print("SQL ERROR:", e)
         todos = []
