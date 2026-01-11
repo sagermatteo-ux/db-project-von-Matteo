@@ -143,7 +143,8 @@ def rent(material_id):
         print("Rent SQL ERROR:", e)
     return redirect(url_for("index"))
 
-@app.post("/delete_material/<int:material_id>"")
+@app.post("/delete_material/<int:material_id>")
+@login_required
 def delete_material(material_id):
     print("TODO")
     return redirect(url_for("index"))
