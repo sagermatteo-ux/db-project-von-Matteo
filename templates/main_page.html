@@ -43,6 +43,23 @@
 {% endfor %}
 </ul>
 
+<h2>Offene Anfragen für deine Materialien</h2>
+<ul>
+{% for req in requests %}
+<li>
+    <strong>{{ req.requester_name }}</strong> möchte <em>{{ req.material_name }}</em> mieten.
+    <form method="POST" action="{{ url_for('accept_request', req_id=req.id) }}" style="display:inline">
+        <button class="btn btn-success">Akzeptieren</button>
+    </form>
+    <form method="POST" action="{{ url_for('reject_request', req_id=req.id) }}" style="display:inline">
+        <button class="btn btn-danger">Ablehnen</button>
+    </form>
+</li>
+{% else %}
+<p>Keine neuen Anfragen</p>
+{% endfor %}
+</ul>
+
 <h2>Neuen Gegenstand hinzufügen</h2>
 <form method="POST">
     <input name="contents" required placeholder="Gegenstand">
@@ -71,4 +88,3 @@
 </style>
 
 {% endblock %}
-
