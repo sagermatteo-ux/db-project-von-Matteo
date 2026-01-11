@@ -15,22 +15,16 @@
     </label>
 
     {% if todo.status == 'pending' %}
-        <span class="request-badge">✔ Anfrage geschickt</span>
+        <span class="request-badge pending">✔ Anfrage geschickt</span>
 
     {% elif todo.status == 'accepted' %}
-        <span class="request-badge accepted">
-            ✔ Anfrage akzeptiert
-        </span>
+        <span class="request-badge accepted">✔ Anfrage akzeptiert</span>
 
     {% elif todo.status == 'rejected' %}
-        <span class="request-badge rejected">
-            ✖ Anfrage abgelehnt
-        </span>
+        <span class="request-badge rejected">✖ Anfrage abgelehnt</span>
 
     {% else %}
-        <button type="submit" class="btn btn-success">
-            Mieten
-        </button>
+        <button type="submit" class="btn btn-success">Mieten</button>
     {% endif %}
 </form>
 
@@ -76,10 +70,13 @@
 .todo-item { margin-bottom: 15px; }
 
 .request-badge {
-    padding: 8px 14px;
+    padding: 6px 12px;
     border-radius: 6px;
     font-weight: bold;
     margin-left: 10px;
+}
+
+.request-badge.pending {
     background: #fff3cd;
     color: #664d03;
 }
