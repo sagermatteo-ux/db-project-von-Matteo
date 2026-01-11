@@ -38,21 +38,32 @@
     </form>
 
     {% else %}
-    <!-- EIGENER GEGENSTAND → LÖSCHEN -->
-    <label>
-        <strong>{{ todo.content }}</strong><br>
-        <small>📍 {{ todo.location }} | Kategorie: {{ todo.cat }}</small>
-    </label>
+        <!-- EIGENER GEGENSTAND → LÖSCHEN -->
+        <label>
+            <strong>{{ todo.content }}</strong><br>
+            <small>📍 {{ todo.location }} | Kategorie: {{ todo.cat }}</small>
+        </label>
 
-    <form method="POST"
-          action="{{ url_for('delete_material', material_id=todo.id) }}"
-          style="display:inline">
-        <button type="submit"
-                class="btn btn-danger"
-                onclick="return confirm('Willst du diesen Gegenstand wirklich löschen?');">
-            Löschen
-        </button>
-    </form>
+        <form method="POST"
+            action="{{ url_for('delete_material', material_id=todo.id) }}"
+            style="display:inline">
+            <button type="submit"
+                    class="btn btn-danger"
+                    onclick="return confirm('Willst du diesen Gegenstand wirklich löschen?');">
+                Löschen
+            </button>
+        </form>
+
+        {% if todo.status == 'pending' %}
+            <form method="POST"
+                action="{{ url_for('accept_request', material_id=todo.id) }}"
+                style="display:inline">
+                <button type="submit"
+                        class="btn btn-success">
+                    Anfrage akzeptieren
+                </button>
+            </form>
+         {% endif %}
     {% endif %}
 
 </li>

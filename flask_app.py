@@ -146,9 +146,14 @@ def rent(material_id):
 @app.post("/delete_material/<int:material_id>")
 @login_required
 def delete_material(material_id):
-    print("TODO")
+    print("TODO: Eigenes Produkt löschen")
     return redirect(url_for("index"))
 
+@app.post("/accept_request/<int:material_id>")
+@login_required
+def accept_request(material_id):
+    print("TODO: Anfrage akzeptieren")
+    return redirect(url_for("index"))
 
 if __name__ == "__main__":
     app.run()
