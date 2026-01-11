@@ -2,6 +2,7 @@
 {% block content %}
 
 <h2>Verfügbare Gegenstände</h2>
+
 <ul class="todo-list">
 {% for todo in todos %}
 <li class="todo-item">
@@ -15,12 +16,21 @@
 
     {% if todo.status == 'pending' %}
         <span class="request-badge">✔ Anfrage geschickt</span>
+
     {% elif todo.status == 'accepted' %}
-        <span class="request-badge accepted">✔ Anfrage akzeptiert</span>
+        <span class="request-badge accepted">
+            ✔ Anfrage akzeptiert
+        </span>
+
     {% elif todo.status == 'rejected' %}
-        <span class="request-badge rejected">✖ Anfrage abgelehnt</span>
+        <span class="request-badge rejected">
+            ✖ Anfrage abgelehnt
+        </span>
+
     {% else %}
-        <button type="submit" class="btn btn-success">Mieten</button>
+        <button type="submit" class="btn btn-success">
+            Mieten
+        </button>
     {% endif %}
 </form>
 
@@ -30,8 +40,11 @@
     <small>📍 {{ todo.location }} | Kategorie: {{ todo.cat }}</small>
 </label>
 
-<form method="POST" action="{{ url_for('delete_material', material_id=todo.id) }}" style="display:inline">
-    <button class="btn btn-danger" onclick="return confirm('Willst du diesen Gegenstand wirklich löschen?');">
+<form method="POST"
+      action="{{ url_for('delete_material', material_id=todo.id) }}"
+      style="display:inline">
+    <button class="btn btn-danger"
+            onclick="return confirm('Willst du diesen Gegenstand wirklich löschen?');">
         Löschen
     </button>
 </form>
@@ -40,23 +53,6 @@
 </li>
 {% else %}
 <p>❗ Keine veröffentlichten Gegenstände</p>
-{% endfor %}
-</ul>
-
-<h2>Offene Anfragen für deine Materialien</h2>
-<ul>
-{% for req in requests %}
-<li>
-    <strong>{{ req.requester_name }}</strong> möchte <em>{{ req.material_name }}</em> mieten.
-    <form method="POST" action="{{ url_for('accept_request', req_id=req.id) }}" style="display:inline">
-        <button class="btn btn-success">Akzeptieren</button>
-    </form>
-    <form method="POST" action="{{ url_for('reject_request', req_id=req.id) }}" style="display:inline">
-        <button class="btn btn-danger">Ablehnen</button>
-    </form>
-</li>
-{% else %}
-<p>Keine neuen Anfragen</p>
 {% endfor %}
 </ul>
 
@@ -79,13 +75,32 @@
 .todo-list { list-style: none; padding: 0; }
 .todo-item { margin-bottom: 15px; }
 
-.request-badge { padding: 8px 14px; border-radius: 6px; font-weight: bold; margin-left: 10px; background: #fff3cd; color: #664d03; }
-.request-badge.accepted { background: #d1e7dd; color: #0f5132; }
-.request-badge.rejected { background: #f8d7da; color: #842029; }
+.request-badge {
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-weight: bold;
+    margin-left: 10px;
+    background: #fff3cd;
+    color: #664d03;
+}
 
-.btn-danger { background-color: #dc3545; color: white; border: none; padding: 8px 14px; border-radius: 6px; }
-.btn-success { background-color: #198754; color: white; border: none; padding: 8px 14px; border-radius: 6px; }
+.request-badge.accepted {
+    background: #d1e7dd;
+    color: #0f5132;
+}
+
+.request-badge.rejected {
+    background: #f8d7da;
+    color: #842029;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+}
 </style>
 
 {% endblock %}
-
