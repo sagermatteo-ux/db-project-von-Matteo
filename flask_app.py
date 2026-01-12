@@ -111,7 +111,6 @@ def logout():
 @login_required
 def index():
     if request.method == "POST":
-        # Neues Material hinzufügen
         db_write(
             "INSERT INTO Material (user_id, content, cat, location) VALUES (%s, %s, %s, %s)",
             (current_user.id, request.form["contents"], request.form["category"], request.form["location"])
@@ -120,9 +119,11 @@ def index():
 
     try:
         todos = db_read("""
-            SELECT m.id, m.user_id, m.content, m.cat, m.location, r.status, (r.requester_id = %s) AS requested
+            SELECT m.id, m.user_id, m.content, m.cat, m.location,
+                   r.status,
+                   (r.requester_id = %s) AS requested
             FROM Material m
-                LEFT JOIN RentRequests r ON  m.id = r.material_id;
+            LEFT JOIN RentRequests r ON m.id = r.material_id
             """, (current_user.id,))
     except Exception as e:
         print("SQL ERROR:", e)
@@ -135,18 +136,16 @@ def index():
 def rent(material_id):
     try:
         db_write(
-            "INSERT IGNORE INTO RentRequests (material_id, requester_id) VALUES (%s, %s)",
+            "INSERT IGNORE INTO RentRequests (material_id, requester_id, status) VALUES (%s, %s, 'pending')",
             (material_id, current_user.id)
         )
     except Exception as e:
         print("Rent SQL ERROR:", e)
     return redirect(url_for("index"))
 
-
 @app.post("/delete_material/<int:material_id>")
 @login_required
 def delete_material(material_id):
-    # nur eigenes Material löschen
     db_write(
         "DELETE FROM Material WHERE id = %s AND user_id = %s",
         (material_id, current_user.id)
@@ -156,7 +155,16 @@ def delete_material(material_id):
 @app.post("/accept_request/<int:material_id>")
 @login_required
 def accept_request(material_id):
-    print("TODO: Anfrage akzeptieren")
+    db_write(
+        """
+        UPDATE RentRequests r
+        JOIN Material m ON r.material_id = m.id
+        SET r.status = 'accepted'
+        WHERE r.material_id = %s
+          AND m.user_id = %s
+        """,
+        (material_id, current_user.id)
+    )
     return redirect(url_for("index"))
 
 if __name__ == "__main__":
