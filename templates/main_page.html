@@ -18,7 +18,7 @@
         </label>
 
         {% if todo.status == 'pending' %}
-            <span class="request-badge">✔ Anfrage geschickt</span>
+            <span class="request-badge pending">✔ Anfrage geschickt</span>
 
         {% elif todo.status == 'accepted' %}
             <span class="request-badge accepted">
@@ -97,15 +97,34 @@
     margin-bottom: 15px;
 }
 
+/* Allgemeine Badge-Stile */
 .request-badge {
     display: inline-block;
     padding: 8px 14px;
-    background-color: #f8d7da;
-    color: #842029;
-    border: 2px solid #842029;
     border-radius: 6px;
     font-weight: bold;
     margin-left: 10px;
+}
+
+/* Pending = rot */
+.request-badge.pending {
+    background-color: #f8d7da;
+    color: #842029;
+    border: 2px solid #842029;
+}
+
+/* Accepted = blau */
+.request-badge.accepted {
+    background-color: #0d6efd;
+    color: white;
+    border: 2px solid #0d6efd;
+}
+
+/* Rejected = dunkelrot */
+.request-badge.rejected {
+    background-color: #f5c2c7;
+    color: #842029;
+    border: 2px solid #842029;
 }
 
 .btn-danger {
