@@ -118,7 +118,6 @@ def index():
         )
         return redirect(url_for("index"))
 
-    # GET: Todos laden + prüfen, ob User bereits angefragt hat
     try:
         todos = db_read("""
             SELECT m.id, m.user_id, m.content, m.cat, m.location, r.status, (r.requester_id = %s) AS requested
@@ -143,10 +142,15 @@ def rent(material_id):
         print("Rent SQL ERROR:", e)
     return redirect(url_for("index"))
 
+
 @app.post("/delete_material/<int:material_id>")
 @login_required
 def delete_material(material_id):
-    print("TODO: Eigenes Produkt löschen")
+    # nur eigenes Material löschen
+    db_write(
+        "DELETE FROM Material WHERE id = %s AND user_id = %s",
+        (material_id, current_user.id)
+    )
     return redirect(url_for("index"))
 
 @app.post("/accept_request/<int:material_id>")
