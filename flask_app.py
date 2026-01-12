@@ -106,20 +106,26 @@ def logout():
     logout_user()
     return redirect(url_for("index"))
 
-# ---------------- Main App ----------------
+
 @app.route("/", methods=["GET", "POST"])
 @login_required
 def index():
     if request.method == "POST":
         db_write(
-            "INSERT INTO Material (user_id, content, cat, location) VALUES (%s, %s, %s, %s)",
-            (current_user.id, request.form["contents"], request.form["category"], request.form["location"])
+            "INSERT INTO Material (user_id, content, cat, location, pickup_time) VALUES (%s, %s, %s, %s, %s)",
+            (
+                current_user.id,
+                request.form["contents"],
+                request.form["category"],
+                request.form["location"],
+                request.form["pickup_time"]
+            )
         )
         return redirect(url_for("index"))
 
     try:
         todos = db_read("""
-            SELECT m.id, m.user_id, m.content, m.cat, m.location,
+            SELECT m.id, m.user_id, m.content, m.cat, m.location, m.pickup_time,
                    r.status,
                    (r.requester_id = %s) AS requested
             FROM Material m
