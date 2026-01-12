@@ -7,63 +7,44 @@
 {% for todo in todos %}
 <li class="todo-item">
 
-    <!-- FORM für MIETEN -->
     {% if todo.user_id != current_user.id %}
-    <form method="POST"
-          action="{{ url_for('rent', material_id=todo.id) }}">
-
+    <form method="POST" action="{{ url_for('rent', material_id=todo.id) }}">
         <label>
             <strong>{{ todo.content }}</strong><br>
-            <small>📍 {{ todo.location }} | Kategorie: {{ todo.cat }}</small>
+            <small>📍 {{ todo.location }} | Kategorie: {{ todo.cat }} | Abholung: {{ todo.pickup_time }}</small>
         </label>
 
         {% if todo.status == 'pending' %}
-            <span class="request-badge pending"> Anfrage geschickt</span>
+            <span class="request-badge pending">✔ Anfrage geschickt</span>
 
         {% elif todo.status == 'accepted' %}
-            <span class="request-badge accepted">
-                 Anfrage akzeptiert 🎉
-            </span>
+            <span class="request-badge accepted">✔ Anfrage akzeptiert 🎉</span>
 
         {% elif todo.status == 'rejected' %}
-            <span class="request-badge rejected">
-                ✖ Anfrage abgelehnt
-            </span>
+            <span class="request-badge rejected">✖ Anfrage abgelehnt</span>
 
         {% else %}
-            <button type="submit" class="btn btn-success">
-                Mieten
-            </button>
+            <button type="submit" class="btn btn-success">Mieten</button>
         {% endif %}
     </form>
 
     {% else %}
-        <!-- EIGENER GEGENSTAND → LÖSCHEN -->
         <label>
             <strong>{{ todo.content }}</strong><br>
-            <small>📍 {{ todo.location }} | Kategorie: {{ todo.cat }}</small>
+            <small>📍 {{ todo.location }} | Kategorie: {{ todo.cat }} | Abholung: {{ todo.pickup_time }}</small>
         </label>
 
-        <form method="POST"
-            action="{{ url_for('delete_material', material_id=todo.id) }}"
-            style="display:inline">
-            <button type="submit"
-                    class="btn btn-danger"
-                    onclick="return confirm('Willst du diesen Gegenstand wirklich löschen?');">
+        <form method="POST" action="{{ url_for('delete_material', material_id=todo.id) }}" style="display:inline">
+            <button type="submit" class="btn btn-danger" onclick="return confirm('Willst du diesen Gegenstand wirklich löschen?');">
                 Löschen
             </button>
         </form>
 
         {% if todo.status == 'pending' %}
-            <form method="POST"
-                action="{{ url_for('accept_request', material_id=todo.id) }}"
-                style="display:inline">
-                <button type="submit"
-                        class="btn btn-success">
-                    Anfrage akzeptieren?
-                </button>
+            <form method="POST" action="{{ url_for('accept_request', material_id=todo.id) }}" style="display:inline">
+                <button type="submit" class="btn btn-success">Anfrage akzeptieren?</button>
             </form>
-         {% endif %}
+        {% endif %}
     {% endif %}
 
 </li>
@@ -84,6 +65,7 @@
         <option value="schreibmaterial">Schreibmaterial</option>
     </select>
     <input name="location" required placeholder="Ort">
+    <input name="pickup_time" required placeholder="Abholzeit z. B. 14:00 Uhr">
     <button class="btn btn-primary">Hinzufügen</button>
 </form>
 
@@ -97,7 +79,6 @@
     margin-bottom: 15px;
 }
 
-/* Allgemeine Badge-Stile */
 .request-badge {
     display: inline-block;
     padding: 8px 14px;
