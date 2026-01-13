@@ -7,49 +7,53 @@
 {% for todo in todos %}
 <li class="todo-item">
 
-    {% if todo.user_id != current_user.id %}
-    <form method="POST" action="{{ url_for('rent', material_id=todo.id) }}">
-        <label>
-            <strong>{{ todo.content }}</strong><br>
-            <small>📍 {{ todo.location }} | Kategorie: {{ todo.cat }} | Abholung: {{ todo.pickup_time }}</small>
-        </label>
+{% if todo.user_id != current_user.id %}
+<form method="POST" action="{{ url_for('rent', material_id=todo.id) }}">
 
-        {% if todo.status == 'pending' %}
-            <span class="request-badge pending">✔ Anfrage geschickt</span>
+    <label>
+        <strong>{{ todo.content }}</strong><br>
+        <small>
+            📍 {{ todo.location }} |
+            Kategorie: {{ todo.cat }} |
+            ⏰ Abholung: {{ todo.pickup_time }}
+        </small>
+    </label>
 
-        {% elif todo.status == 'accepted' %}
-            <span class="request-badge accepted">✔ Anfrage akzeptiert 🎉</span>
-
-        {% elif todo.status == 'rejected' %}
-            <span class="request-badge rejected">✖ Anfrage abgelehnt</span>
-
-        {% else %}
-            <button type="submit" class="btn btn-success">Mieten</button>
-        {% endif %}
-    </form>
-
+    {% if todo.status == 'pending' %}
+        <span class="request-badge pending">Anfrage geschickt</span>
+    {% elif todo.status == 'accepted' %}
+        <span class="request-badge accepted">Anfrage akzeptiert 🎉</span>
     {% else %}
-        <label>
-            <strong>{{ todo.content }}</strong><br>
-            <small>📍 {{ todo.location }} | Kategorie: {{ todo.cat }} | Abholung: {{ todo.pickup_time }}</small>
-        </label>
-
-        <form method="POST" action="{{ url_for('delete_material', material_id=todo.id) }}" style="display:inline">
-            <button type="submit" class="btn btn-danger" onclick="return confirm('Willst du diesen Gegenstand wirklich löschen?');">
-                Löschen
-            </button>
-        </form>
-
-        {% if todo.status == 'pending' %}
-            <form method="POST" action="{{ url_for('accept_request', material_id=todo.id) }}" style="display:inline">
-                <button type="submit" class="btn btn-success">Anfrage akzeptieren?</button>
-            </form>
-        {% endif %}
+        <button class="btn btn-success">Mieten</button>
     {% endif %}
+</form>
+
+{% else %}
+<label>
+    <strong>{{ todo.content }}</strong><br>
+    <small>
+        📍 {{ todo.location }} |
+        Kategorie: {{ todo.cat }} |
+        ⏰ Abholung: {{ todo.pickup_time }}
+    </small>
+</label>
+
+<form method="POST"
+      action="{{ url_for('delete_material', material_id=todo.id) }}"
+      style="display:inline">
+    <button class="btn btn-danger">Löschen</button>
+</form>
+
+{% if todo.status == 'pending' %}
+<form method="POST"
+      action="{{ url_for('accept_request', material_id=todo.id) }}"
+      style="display:inline">
+    <button class="btn btn-success">Anfrage akzeptieren?</button>
+</form>
+{% endif %}
+{% endif %}
 
 </li>
-{% else %}
-<div>❗ Keine veröffentlichten Gegenstände</div>
 {% endfor %}
 </ul>
 
@@ -57,7 +61,7 @@
 <form method="POST">
     <input name="contents" required placeholder="Gegenstand">
     <select name="category" required>
-        <option value="" disabled selected>Kategorie</option>
+        <option disabled selected>Kategorie</option>
         <option value="buecher">Bücher</option>
         <option value="taschenrechner">Taschenrechner</option>
         <option value="lineal_geodreieck">Lineal & Geodreieck</option>
@@ -65,60 +69,42 @@
         <option value="schreibmaterial">Schreibmaterial</option>
     </select>
     <input name="location" required placeholder="Ort">
-    <input name="pickup_time" required placeholder="Abholzeit z. B. 14:00 Uhr">
+
+    <!-- ⏰ NUR UHRZEIT (Apple-Wecker-Rad) -->
+    <input type="time" name="pickup_time" required step="900">
+
     <button class="btn btn-primary">Hinzufügen</button>
 </form>
 
 <style>
-.todo-list {
-    list-style: none;
-    padding: 0;
-}
-
-.todo-item {
-    margin-bottom: 15px;
-}
+.todo-list { list-style: none; padding: 0; }
+.todo-item { margin-bottom: 15px; }
 
 .request-badge {
-    display: inline-block;
     padding: 8px 14px;
     border-radius: 6px;
     font-weight: bold;
     margin-left: 10px;
 }
 
-/* Pending = rot */
 .request-badge.pending {
-    background-color: #f8d7da;
+    background: #f8d7da;
     color: #842029;
     border: 2px solid #842029;
 }
 
-/* Accepted = blau */
 .request-badge.accepted {
-    background-color: #0d6efd;
+    background: #0d6efd;
     color: white;
     border: 2px solid #0d6efd;
 }
 
-/* Rejected = dunkelrot */
-.request-badge.rejected {
-    background-color: #f5c2c7;
-    color: #842029;
-    border: 2px solid #842029;
-}
-
 .btn-danger {
-    background-color: #dc3545;
-    border: none;
+    background: #dc3545;
     color: white;
+    border: none;
     padding: 8px 14px;
     border-radius: 6px;
-    cursor: pointer;
-}
-
-.btn-danger:hover {
-    background-color: #bb2d3b;
 }
 </style>
 
