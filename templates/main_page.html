@@ -24,7 +24,7 @@
     {% elif todo.status == 'accepted' %}
         <span class="request-badge accepted">Anfrage akzeptiert 🎉</span>
     {% else %}
-        <button class="btn btn-success">Mieten</button>
+        <button type="submit" class="btn btn-success">Mieten</button>
     {% endif %}
 </form>
 
@@ -41,14 +41,20 @@
 <form method="POST"
       action="{{ url_for('delete_material', material_id=todo.id) }}"
       style="display:inline">
-    <button class="btn btn-danger">Löschen</button>
+    <button type="submit"
+            class="btn btn-danger"
+            onclick="return confirm('Willst du diesen Gegenstand wirklich löschen?');">
+        Löschen
+    </button>
 </form>
 
 {% if todo.status == 'pending' %}
 <form method="POST"
       action="{{ url_for('accept_request', material_id=todo.id) }}"
       style="display:inline">
-    <button class="btn btn-success">Anfrage akzeptieren?</button>
+    <button type="submit" class="btn btn-success">
+        Anfrage akzeptieren?
+    </button>
 </form>
 {% endif %}
 {% endif %}
@@ -59,7 +65,7 @@
 {% endfor %}
 </ul>
 
-<!-- ================= BOX ================= -->
+<!-- ================= NEUER GEGENSTAND BOX ================= -->
 <div class="add-box">
     <h2>Neuen Gegenstand hinzufügen</h2>
 
@@ -133,6 +139,7 @@
 .add-box select {
     display: block;
     width: 100%;
+    box-sizing: border-box; /* ⭐ Fix für gleich breite Uhrzeit */
     padding: 10px;
     margin-bottom: 12px;
     border-radius: 6px;
