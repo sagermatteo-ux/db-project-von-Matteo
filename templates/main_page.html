@@ -7,72 +7,51 @@
 {% for todo in todos %}
 <li class="todo-item">
 
-    <!-- FORM für MIETEN -->
-    {% if todo.user_id != current_user.id %}
-    <form method="POST"
-          action="{{ url_for('rent', material_id=todo.id) }}">
+{% if todo.user_id != current_user.id %}
+<form method="POST" action="{{ url_for('rent', material_id=todo.id) }}">
 
-        <label>
-            <strong>{{ todo.content }}</strong><br>
-            <small>
-                📍 {{ todo.location }} |
-                Kategorie: {{ todo.cat }} |
-                ⏰ Abholung: {{ todo.pickup_time }}
-            </small>
-        </label>
+    <label>
+        <strong>{{ todo.content }}</strong><br>
+        <small>
+            📍 {{ todo.location }} |
+            Kategorie: {{ todo.cat }} |
+            ⏰ Abholung: {{ todo.pickup_time }}
+        </small>
+    </label>
 
-        {% if todo.status == 'pending' %}
-            <span class="request-badge pending">Anfrage geschickt</span>
-
-        {% elif todo.status == 'accepted' %}
-            <span class="request-badge accepted">
-                Anfrage akzeptiert 🎉
-            </span>
-
-        {% elif todo.status == 'rejected' %}
-            <span class="request-badge rejected">
-                ✖ Anfrage abgelehnt
-            </span>
-
-        {% else %}
-            <button type="submit" class="btn btn-success">
-                Mieten
-            </button>
-        {% endif %}
-    </form>
-
+    {% if todo.status == 'pending' %}
+        <span class="request-badge pending">Anfrage geschickt</span>
+    {% elif todo.status == 'accepted' %}
+        <span class="request-badge accepted">Anfrage akzeptiert 🎉</span>
     {% else %}
-        <!-- EIGENER GEGENSTAND -->
-        <label>
-            <strong>{{ todo.content }}</strong><br>
-            <small>
-                📍 {{ todo.location }} |
-                Kategorie: {{ todo.cat }} |
-                ⏰ Abholung: {{ todo.pickup_time }}
-            </small>
-        </label>
-
-        <form method="POST"
-            action="{{ url_for('delete_material', material_id=todo.id) }}"
-            style="display:inline">
-            <button type="submit"
-                    class="btn btn-danger"
-                    onclick="return confirm('Willst du diesen Gegenstand wirklich löschen?');">
-                Löschen
-            </button>
-        </form>
-
-        {% if todo.status == 'pending' %}
-            <form method="POST"
-                action="{{ url_for('accept_request', material_id=todo.id) }}"
-                style="display:inline">
-                <button type="submit"
-                        class="btn btn-success">
-                    Anfrage akzeptieren?
-                </button>
-            </form>
-         {% endif %}
+        <button class="btn btn-success">Mieten</button>
     {% endif %}
+</form>
+
+{% else %}
+<label>
+    <strong>{{ todo.content }}</strong><br>
+    <small>
+        📍 {{ todo.location }} |
+        Kategorie: {{ todo.cat }} |
+        ⏰ Abholung: {{ todo.pickup_time }}
+    </small>
+</label>
+
+<form method="POST"
+      action="{{ url_for('delete_material', material_id=todo.id) }}"
+      style="display:inline">
+    <button class="btn btn-danger">Löschen</button>
+</form>
+
+{% if todo.status == 'pending' %}
+<form method="POST"
+      action="{{ url_for('accept_request', material_id=todo.id) }}"
+      style="display:inline">
+    <button class="btn btn-success">Anfrage akzeptieren?</button>
+</form>
+{% endif %}
+{% endif %}
 
 </li>
 {% else %}
@@ -80,32 +59,34 @@
 {% endfor %}
 </ul>
 
-<h2>Neuen Gegenstand hinzufügen</h2>
-<form method="POST">
-    <input name="contents" required placeholder="Gegenstand">
+<!-- ================= BOX ================= -->
+<div class="add-box">
+    <h2>Neuen Gegenstand hinzufügen</h2>
 
-    <select name="category" required>
-        <option value="" disabled selected>Kategorie</option>
-        <option value="buecher">Bücher</option>
-        <option value="taschenrechner">Taschenrechner</option>
-        <option value="lineal_geodreieck">Lineal & Geodreieck</option>
-        <option value="zirkel">Zirkel</option>
-        <option value="schreibmaterial">Schreibmaterial</option>
-    </select>
+    <form method="POST">
+        <input name="contents" required placeholder="Gegenstand">
 
-    <input name="location" required placeholder="Ort">
+        <select name="category" required>
+            <option value="" disabled selected>Kategorie</option>
+            <option value="buecher">Bücher</option>
+            <option value="taschenrechner">Taschenrechner</option>
+            <option value="lineal_geodreieck">Lineal & Geodreieck</option>
+            <option value="zirkel">Zirkel</option>
+            <option value="schreibmaterial">Schreibmaterial</option>
+        </select>
 
-    <!-- ⏰ Uhrzeit -->
-    <label class="time-label">⏰ Uhrzeit</label>
-    <input type="time"
-           name="pickup_time"
-           placeholder="Uhrzeit"
-           class="time-input"
-           required
-           step="900">
+        <input name="location" required placeholder="Ort">
 
-    <button class="btn btn-primary">Hinzufügen</button>
-</form>
+        <label class="time-label">⏰ Uhrzeit</label>
+        <input type="time"
+               name="pickup_time"
+               class="time-input"
+               required
+               step="900">
+
+        <button class="btn btn-primary">Hinzufügen</button>
+    </form>
+</div>
 
 <style>
 .todo-list {
@@ -117,9 +98,8 @@
     margin-bottom: 15px;
 }
 
-/* Badge-Stile */
+/* ===== BADGES ===== */
 .request-badge {
-    display: inline-block;
     padding: 8px 14px;
     border-radius: 6px;
     font-weight: bold;
@@ -127,48 +107,62 @@
 }
 
 .request-badge.pending {
-    background-color: #f8d7da;
+    background: #f8d7da;
     color: #842029;
     border: 2px solid #842029;
 }
 
 .request-badge.accepted {
-    background-color: #0d6efd;
+    background: #0d6efd;
     color: white;
     border: 2px solid #0d6efd;
 }
 
-.request-badge.rejected {
-    background-color: #f5c2c7;
-    color: #842029;
-    border: 2px solid #842029;
+/* ===== ADD BOX ===== */
+.add-box {
+    margin-top: 40px;
+    padding: 25px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    max-width: 500px;
 }
 
-/* Uhrzeit-Label & Feld */
-.time-label {
+/* Inputs in Box */
+.add-box input,
+.add-box select {
     display: block;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+/* Uhrzeit */
+.time-label {
     font-weight: bold;
-    margin-top: 10px;
-    margin-bottom: 2px;
+    margin-bottom: 4px;
+    display: block;
 }
 
 .time-input {
-    margin-top: -4px; /* Feld leicht nach oben */
+    margin-top: -4px;
 }
 
 /* Buttons */
 .btn-danger {
-    background-color: #dc3545;
-    border: none;
+    background: #dc3545;
     color: white;
+    border: none;
     padding: 8px 14px;
     border-radius: 6px;
-    cursor: pointer;
 }
 
-.btn-danger:hover {
-    background-color: #bb2d3b;
+.btn-primary {
+    margin-top: 10px;
 }
 </style>
 
 {% endblock %}
+
