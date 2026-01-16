@@ -3,68 +3,89 @@
 
 <h2>Verfügbare Gegenstände</h2>
 
-<ul class="todo-list">
-{% for todo in todos %}
-<li class="todo-item">
+<div class="columns">
 
-    {% if todo.user_id != current_user.id %}
-    <form method="POST" action="{{ url_for('rent', material_id=todo.id) }}">
 
-        <label>
+  <div class="column">
+    <h3>Fremde Gegenstände</h3>
+
+    <ul class="todo-list">
+    {% for todo in todos %}
+      {% if todo.user_id != current_user.id %}
+      <li class="todo-item">
+
+        <form method="POST" action="{{ url_for('rent', material_id=todo.id) }}">
+
+          <label>
             <strong>{{ todo.content }}</strong><br>
             <small>📍 {{ todo.location }} | Kategorie: {{ todo.cat }}</small>
             {% if todo.pickup_time %}
-                <br><small>⏰ Abholung: {{ todo.pickup_time }}</small>
+              <br><small>⏰ Abholung: {{ todo.pickup_time }}</small>
             {% endif %}
-        </label>
+          </label>
 
-        {% if todo.status == 'pending' %}
+          {% if todo.status == 'pending' %}
             <span class="request-badge pending">Anfrage geschickt</span>
-        {% elif todo.status == 'accepted' %}
+          {% elif todo.status == 'accepted' %}
             <span class="request-badge accepted">Anfrage akzeptiert 🎉</span>
-        {% elif todo.status == 'rejected' %}
+          {% elif todo.status == 'rejected' %}
             <span class="request-badge rejected">Anfrage abgelehnt</span>
-        {% else %}
+          {% else %}
             <button type="submit" class="btn btn-success">Mieten</button>
-        {% endif %}
-    </form>
+          {% endif %}
 
-    {% else %}
+        </form>
+      </li>
+      {% endif %}
+    {% endfor %}
+    </ul>
+  </div>
+
+
+  <div class="column">
+    <h3>Meine Gegenstände</h3>
+
+    <ul class="todo-list">
+    {% for todo in todos %}
+      {% if todo.user_id == current_user.id %}
+      <li class="todo-item">
+
         <label>
-            <strong>{{ todo.content }}</strong><br>
-            <small>📍 {{ todo.location }} | Kategorie: {{ todo.cat }}</small>
-            {% if todo.pickup_time %}
-                <br><small>⏰ Abholung: {{ todo.pickup_time }}</small>
-            {% endif %}
+          <strong>{{ todo.content }}</strong><br>
+          <small>📍 {{ todo.location }} | Kategorie: {{ todo.cat }}</small>
+          {% if todo.pickup_time %}
+            <br><small>⏰ Abholung: {{ todo.pickup_time }}</small>
+          {% endif %}
         </label>
 
         <form method="POST"
               action="{{ url_for('delete_material', material_id=todo.id) }}"
               style="display:inline">
-            <button type="submit" class="btn btn-danger"
-                    onclick="return confirm('Willst du diesen Gegenstand wirklich löschen?');">
-                Löschen
-            </button>
+          <button type="submit" class="btn btn-danger"
+                  onclick="return confirm('Willst du diesen Gegenstand wirklich löschen?');">
+            Löschen
+          </button>
         </form>
 
         {% if todo.status == 'pending' %}
         <form method="POST"
               action="{{ url_for('accept_request', material_id=todo.id) }}"
               style="display:inline">
-            <button type="submit" class="btn btn-success">
-                Anfrage akzeptieren?
-            </button>
+          <button type="submit" class="btn btn-success">
+            Anfrage akzeptieren?
+          </button>
         </form>
         {% endif %}
-    {% endif %}
 
-</li>
-{% else %}
-<div>❗ Keine veröffentlichten Gegenstände</div>
-{% endfor %}
-</ul>
+      </li>
+      {% endif %}
+    {% endfor %}
+    </ul>
+  </div>
 
-<!-- NEUER GEGENSTAND BOX -->
+</div>
+
+
 <div class="add-box">
 <h2>Neuen Gegenstand hinzufügen</h2>
 
@@ -88,6 +109,16 @@
 </div>
 
 <style>
+.columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.column h3 {
+    margin-bottom: 10px;
+}
+
 .todo-list {
     list-style: none;
     padding: 0;
@@ -97,7 +128,7 @@
     margin-bottom: 15px;
 }
 
-/* Badge Styles */
+
 .request-badge {
     display: inline-block;
     padding: 8px 14px;
@@ -124,7 +155,7 @@
     border: 2px solid #842029;
 }
 
-/* Add Box */
+
 .add-box {
     background: rgb(90, 121, 80);
     padding: 25px;
@@ -134,7 +165,7 @@
     box-shadow: 0 8px 20px rgba(0,0,0,0.15);
 }
 
-/* Inputs */
+
 .add-box input,
 .add-box select {
     width: 100%;
@@ -146,7 +177,7 @@
     border: 1px solid #ccc;
 }
 
-/* iOS TIME FIX */
+
 .time-input {
     height: 42px;
     font-size: 16px;
