@@ -10,7 +10,7 @@
     background: #b7b7b7;
     padding: 30px 30px 25px;
     border-radius: 8px;
-    box-shadow: 04px 20px rgba(0,0,0,0.06);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
   }
   .auth-title {
     font-size: 26px;
@@ -18,13 +18,24 @@
     margin-top: 0;
     margin-bottom: 20px;
   }
-  .error { color: red; margin-bottom: 15px; }
+  .error {
+    color: red;
+    margin-bottom: 15px;
+  }
   .auth-footer-text {
     font-size: 13px;
     margin-top: 15px;
     text-align: center;
   }
-  .auth-footer-text a { font-weight: 600; }
+  .auth-footer-text a {
+    font-weight: 600;
+  }
+
+  .btn-primary {
+    padding: 14px 0;
+    font-size: 17px;
+    font-weight: 600;
+  }
 </style>
 
 <div class="auth-wrapper">
@@ -60,8 +71,9 @@
       </div>
 
       <button type="submit" class="btn btn-primary btn-block">
-        {{ button_label }}
+        Anmelden
       </button>
+    </form>
 
     {% if footer_text %}
       <p class="auth-footer-text">
