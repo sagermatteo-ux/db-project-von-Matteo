@@ -5,7 +5,6 @@
 
 <div class="columns">
 
-
   <div class="column">
     <h3>Fremde Gegenstände</h3>
 
@@ -40,7 +39,6 @@
     {% endfor %}
     </ul>
   </div>
-
 
   <div class="column">
     <h3>Meine Gegenstände</h3>
@@ -81,31 +79,31 @@
       {% endif %}
     {% endfor %}
     </ul>
+
+    <div class="add-box">
+      <h2>Neuen Gegenstand hinzufügen</h2>
+
+      <form method="POST">
+        <input name="contents" required placeholder="Gegenstand">
+        <select name="category" required>
+          <option value="" disabled selected>Kategorie</option>
+          <option value="buecher">Bücher</option>
+          <option value="taschenrechner">Taschenrechner</option>
+          <option value="lineal_geodreieck">Lineal & Geodreieck</option>
+          <option value="zirkel">Zirkel</option>
+          <option value="schreibmaterial">Schreibmaterial</option>
+        </select>
+        <input name="location" required placeholder="Ort">
+
+        <label class="time-label">⏰ Uhrzeit</label>
+        <input type="time" name="pickup_time" class="time-input" required>
+
+        <button class="btn btn-primary">Hinzufügen</button>
+      </form>
+    </div>
+
   </div>
 
-</div>
-
-
-<div class="add-box">
-<h2>Neuen Gegenstand hinzufügen</h2>
-
-<form method="POST">
-    <input name="contents" required placeholder="Gegenstand">
-    <select name="category" required>
-        <option value="" disabled selected>Kategorie</option>
-        <option value="buecher">Bücher</option>
-        <option value="taschenrechner">Taschenrechner</option>
-        <option value="lineal_geodreieck">Lineal & Geodreieck</option>
-        <option value="zirkel">Zirkel</option>
-        <option value="schreibmaterial">Schreibmaterial</option>
-    </select>
-    <input name="location" required placeholder="Ort">
-
-    <label class="time-label">⏰ Uhrzeit</label>
-    <input type="time" name="pickup_time" class="time-input" required>
-
-    <button class="btn btn-primary">Hinzufügen</button>
-</form>
 </div>
 
 <style>
@@ -127,7 +125,6 @@
 .todo-item {
     margin-bottom: 15px;
 }
-
 
 .request-badge {
     display: inline-block;
@@ -155,7 +152,6 @@
     border: 2px solid #842029;
 }
 
-
 .add-box {
     background: rgb(90, 121, 80);
     padding: 25px;
@@ -164,7 +160,6 @@
     margin-top: 30px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.15);
 }
-
 
 .add-box input,
 .add-box select {
@@ -176,7 +171,6 @@
     border-radius: 6px;
     border: 1px solid #ccc;
 }
-
 
 .time-input {
     height: 42px;
